@@ -5,9 +5,9 @@ class general(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def test(self, ctx):
-        await ctx.send("Hello, World!")
+    @commands.command(description="Displays the ping of the bot.")
+    async def ping(self, ctx):
+        await ctx.send(f"🏓 Pong ({round(self.bot.latency*1000)}ms)")
 
 def setup(bot):
     bot.add_cog(general(bot))
