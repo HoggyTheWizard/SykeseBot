@@ -12,6 +12,7 @@ class verify_commands(commands.Cog):
         self.bot = bot
 
     @commands.command(description="Links a Minecraft account to your Discord account.")
+    @commands.guild_only()
     async def verify(self, ctx, username):
         if users.find_one({"id": ctx.author.id}):
             await ctx.send("You're already verified to the account "
@@ -31,11 +32,11 @@ class verify_commands(commands.Cog):
                 if "discord.gg/" in discord_account:
                     account = "Blocked linked account due to it being an invite link."
                 else:
-                    account = discord
+                    account = discord_account
                 await ctx.send(f"Your accounts don't match!\n\nYour Account: {str(ctx.message.author)}\n"
                                f"Linked Account: {account}")
 
-            elif str(ctx.message.author) == player["player"]["socialMedia"]["links"]["DISCORD"]:
+            elif str(ctx.author) == player["player"]["socialMedia"]["links"]["DISCORD"]:
                 await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
                 users.insert_one({"id": ctx.author.id, "uuid": mojang["id"],
                                   "verifiedAt": datetime.timestamp(datetime.now())})
