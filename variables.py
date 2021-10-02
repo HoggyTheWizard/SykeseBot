@@ -1,1 +1,2 @@
-verified_role_id = None  # I do not have a role ID at this time, will replace when I do
+verified_role_id = 893933214656233563
+unverified_role_id = 893933243768918016
