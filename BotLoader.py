@@ -23,10 +23,12 @@ class BotLoader(commands.Bot):
         if isinstance(exc, commands.CommandNotFound):
             return
 
-        if isinstance(exc, commands.MissingRequiredArgument):
+        elif isinstance(exc, commands.MissingRequiredArgument):
             await ctx.send(f"Invalid Command Format: {ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}")
             return
 
+        elif isinstance(exc, commands.errors.CheckFailure):
+            return
         log.error("", exc_info=exc)
 
         await ctx.send(exc)
