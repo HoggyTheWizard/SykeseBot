@@ -11,10 +11,8 @@ def channel_restricted(users):
     async def predicate(ctx):
         if ctx.channel.id not in whitelisted_channel_ids:
             try:
-                permissions = users.find_one({"id": ctx.author.id})["Permissions"]
-                if permissions["bypassPermissions"] is True:
-                    return True
-                elif permissions["isStaff"] is True:
+                staff = users.find_one({"id": ctx.author.id})["Staff"]
+                if staff["permissionLevel"] >= 1:
                     return True
                 else:
                     await ctx.message.delete()
