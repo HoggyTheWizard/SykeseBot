@@ -64,12 +64,12 @@ class verify_commands(commands.Cog):
                            f"`{users.find_one({'uuid': discord_user.id}).get('uuid', 'ERROR')}`")
         else:
             mojang = await get_mojang_from_username(username=username)
-            await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
+            await discord_user.add_roles(ctx.guild.get_role(verified_role_id))
             users.insert_one({"id": discord_user.id, "uuid": mojang["id"],
                               "verifiedAt": datetime.timestamp(datetime.now()), "verifiedBy": ctx.author.id})
             await ctx.send(f"Successfully verified `{str(discord_user)}` as `{mojang['name']}`")
             try:
-                await ctx.author.remove_roles(ctx.guild.get_role(unverified_role_id))
+                await discord_user.remove_roles(ctx.guild.get_role(unverified_role_id))
             except:
                 pass
 
