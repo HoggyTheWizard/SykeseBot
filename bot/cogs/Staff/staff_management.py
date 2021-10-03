@@ -31,7 +31,7 @@ class staff_management(commands.Cog):
         else:
             users.update_one({"id": user["id"]}, {"$set": {"Staff.permissionLevel": permission_level}})
             await member.add_roles(ctx.guild.get_role(mod_role_id))
-            await ctx.send(f"Successfully set `{str(member.id)}` to staff with a permission level of "
+            await ctx.send(f"Successfully set `{str(member)}` to staff with a permission level of "
                            f"`{permission_level}`")
 
     @staff.command(hidden=True)
@@ -56,7 +56,7 @@ class staff_management(commands.Cog):
             except Exception as e:
                 print(e)
                 await ctx.send("An unexpected error occurred.. please tell a developer to check the console.")
-            await ctx.send(f"Successfully removed staff from `{str(member.id)}`")
+            await ctx.send(f"Successfully removed staff from `{str(member)}`")
 
 
 def setup(bot):
