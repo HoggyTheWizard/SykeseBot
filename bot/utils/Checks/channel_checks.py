@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-whitelisted_channel_ids = [833711606470148206, 889697149279956993, 892116017977905242]
+whitelisted_channel_ids = [893934059804319775, 833711606470148206, 889697149279956993, 892116017977905242]
 
 
 class channel_checks(commands.CommandError):
