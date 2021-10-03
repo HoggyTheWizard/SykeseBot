@@ -14,14 +14,18 @@ def is_verified(users):
     return commands.check(predicate)
 
 
-def is_staff(users):
+def is_staff(users, permission_level=None):
     async def predicate(ctx):
         if users.find_one({"id": ctx.author.id}) is None:
             raise user_checks("You do not have permission to use this command!")
         else:
+            if permission_level is None:
+                permission = 0
+            else:
+                permission = permission_level
             try:
-                permissions = users.find_one({"id": ctx.author.id})["Permissions"]
-                if permissions["isStaff"] is True:
+                staff = users.find_one({"id": ctx.author.id})["Staff"]
+                if staff["permissionLevel"] >= permission:
                     return True
                 else:
                     raise user_checks("You do not have permission to use this command!")
