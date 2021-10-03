@@ -2,6 +2,7 @@ from discord.ext import commands
 from main import main_db
 from bot.utils.Misc.general import aiohttp_json, get_mojang_from_username
 from bot.utils.Checks.channel_checks import channel_restricted
+from bot.utils.Checks.user_checks import is_staff
 from variables import verified_role_id, unverified_role_id
 from datetime import datetime
 import discord
@@ -52,6 +53,25 @@ class verify_commands(commands.Cog):
                     pass
             else:
                 await ctx.send("An unexpected error has occurred.")
+
+    @commands.command(description="Links a Minecraft account to your Discord account.")
+    @commands.guild_only()
+    @channel_restricted(users=users)
+    @is_staff(users=users)
+    async def forceverify(self, ctx, discord_user, username):
+        if users.find_one({"id": discord_user.id}):
+            await ctx.send("This user is already verified to the account "
+                           f"`{users.find_one({'uuid': discord_user.id}).get('uuid', 'ERROR')}`")
+        else:
+            mojang = await get_mojang_from_username(username=username)
+            await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
+            users.insert_one({"id": discord_user.id, "uuid": mojang["id"],
+                              "verifiedAt": datetime.timestamp(datetime.now()), "verifiedBy": ctx.author.id})
+            await ctx.send(f"Successfully verified `{str(discord_user)}` as `{mojang['name']}`")
+            try:
+                await ctx.author.remove_roles(ctx.guild.get_role(unverified_role_id))
+            except:
+                pass
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
