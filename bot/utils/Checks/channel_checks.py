@@ -14,6 +14,8 @@ def channel_restricted(users):
                 permissions = users.find_one({"id": ctx.author.id})["Permissions"]
                 if permissions["bypassPermissions"] is True:
                     return True
+                elif permissions["isStaff"] is True:
+                    return True
                 else:
                     await ctx.message.delete()
                     return
