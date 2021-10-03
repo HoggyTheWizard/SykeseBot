@@ -54,7 +54,7 @@ class verify_commands(commands.Cog):
             else:
                 await ctx.send("An unexpected error has occurred.")
 
-    @commands.command(description="Links a Minecraft account to your Discord account.")
+    @commands.command(hidden=True)
     @commands.guild_only()
     @channel_restricted(users=users)
     @is_staff(users=users)
