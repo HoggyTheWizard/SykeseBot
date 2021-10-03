@@ -24,14 +24,15 @@ class staff_management(commands.Cog):
     @staff.command(hidden=True)
     @channel_restricted(users=users)
     @is_staff(users=users, permission_level=2)
-    async def add(self, ctx, member: discord.Member):
+    async def add(self, ctx, member: discord.Member, permission_level):
         user = users.find_one({"id": member.id})
         if user is None:
             await ctx.send("This user has not verified yet, and as such cannot be set to staff.")
         else:
-            users.update_one({"id": user["id"]}, {"$set": {"Staff.isStaff": True}})
+            users.update_one({"id": user["id"]}, {"$set": {"Staff.permissionLevel": permission_level}})
             await member.add_roles(ctx.guild.get_role(mod_role_id))
-            await ctx.send(f"Successfully set `{str(member.id)}` to staff.")
+            await ctx.send(f"Successfully set `{str(member.id)}` to staff with a permission level of "
+                           f"`{permission_level}`")
 
     @staff.command(hidden=True)
     @channel_restricted(users=users)
@@ -43,7 +44,14 @@ class staff_management(commands.Cog):
         else:
             try:
                 for item in user["Staff"]:
-                    users.update_one({"id": user["id"]}, {"$set": {f"Staff.{item}": False}})
+                    if type(user["Staff"][item]) is int:
+                        users.update_one({"id": user["id"]}, {"$set": {f"Staff.{item}": 0}})
+                    elif type(user["Staff"][item]) is bool:
+                        users.update_one({"id": user["id"]}, {"$set": {f"Staff.{item}": False}})
+                    else:
+                        users.update_one({"id": user["id"]}, {"$set": {f"Staff.{item}": None}})
+                        await ctx.send(f"Value {item} (Type = {type(item)} is neither a boolean nor an integer. Please "
+                        "tell a developer to make an exception for this type. For now, it has been set to None.")
                     await member.remove_roles(ctx.guild.get_role(mod_role_id))
             except Exception as e:
                 print(e)
