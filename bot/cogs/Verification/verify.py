@@ -58,7 +58,7 @@ class verify_commands(commands.Cog):
     @commands.guild_only()
     @channel_restricted(users=users)
     @is_staff(users=users)
-    async def forceverify(self, ctx, discord_user, username):
+    async def forceverify(self, ctx, discord_user: discord.Member, username):
         if users.find_one({"id": discord_user.id}):
             await ctx.send("This user is already verified to the account "
                            f"`{users.find_one({'uuid': discord_user.id}).get('uuid', 'ERROR')}`")
