@@ -29,7 +29,7 @@ class staff_management(commands.Cog):
         if user is None:
             await ctx.send("This user has not verified yet, and as such cannot be set to staff.")
         else:
-            users.update_one({"id": user["id"]}, {"$set": {"Staff.permissionLevel": permission_level}})
+            users.update_one({"id": user["id"]}, {"$set": {"Staff.permissionLevel": int(permission_level)}})
             await member.add_roles(ctx.guild.get_role(mod_role_id))
             await ctx.send(f"Successfully set `{str(member)}` to staff with a permission level of "
                            f"`{permission_level}`")
