@@ -6,3 +6,4 @@ database_password = ""  # This password is not your MongoDB account password, bu
 main_db_name = ""  # The name of the target database
 irl_name = ""  # A check to make sure your IRL name doesn't get leaked when the eval command is used.
 host = ""  # A check to see if the bot is running on the local or main instance. Should be "local" for test bots.
+flagged_words = []  # Words flagged by the flags system
