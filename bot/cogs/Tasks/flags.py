@@ -26,7 +26,7 @@ class flags(commands.Cog):
             if my_word in exceptions:
                 return
             else:
-                #  await message.delete()
+                await message.delete()
                 embed = discord.Embed(title="[FLAGGED] - Detected Abusive Language",
                                       description="Our system detected abusive language in the chat. Please monitor "
                                                   "this situation ASAP. If this was falsely flagged, please let a "
@@ -36,11 +36,9 @@ class flags(commands.Cog):
                 embed.add_field(name="User ID:", value=message.author.id, inline=False)
                 embed.add_field(name="Flagged Word(s):", value=my_word, inline=False)
                 embed.add_field(name="Message Content:", value=message.content, inline=False)
-                embed.add_field(name="Message Link:", value=f"[Click Here]({message.jump_url} \"Jump to Message\")",
-                                inline=False)
                 channel = message.guild.get_channel(836990571012030465)
                 await channel.send(embed=embed)
-                await channel.send(f"User ID (for mobile users): {message.author.id}\n<@{mod_role_id}>")
+                await channel.send(f"{message.author.id}\n<@{mod_role_id}>")
 
 def setup(bot):
     bot.add_cog(flags(bot))
