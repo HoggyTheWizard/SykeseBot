@@ -25,7 +25,7 @@ class help_command(commands.Cog):
 
         cogs = [c for c in self.bot.cogs.keys()]
         # This list is a list of those cogs to be removed
-        ignoredCogs = []
+        ignoredCogs = ["eval_command", "staff_management"]
         for removed_cog in ignoredCogs:
             if removed_cog not in cogs:
                 print(f"Cog in help list {removed_cog} cannot be found.")
@@ -60,6 +60,8 @@ class help_command(commands.Cog):
                 # creates just a plain text list of the commands and their arguments to put into an embed
                 commandList = ""
                 for command in self.bot.get_cog(cog).walk_commands():
+                    if command.hidden:
+                        continue
                     if command.parent is not None:
                         continue
                     if command.signature is None:
