@@ -5,6 +5,7 @@ import discord
 
 exceptions = ["None for now :sadge:"]
 
+
 class flags(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -39,6 +40,7 @@ class flags(commands.Cog):
                 channel = message.guild.get_channel(836990571012030465)
                 await channel.send(embed=embed)
                 await channel.send(f"{message.author.id}\n<@{mod_role_id}>")
+
 
 def setup(bot):
     bot.add_cog(flags(bot))
