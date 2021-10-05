@@ -28,7 +28,8 @@ async def get_mojang_from_username(username):
                 async with session.get(url) as resp:
                     return await resp.json()
         except:
-            raise general(f"Invalid username provided - are you sure `{username}` is correct?")
+            raise general(f"Invalid username provided - are you sure `{username}` is correct? Note that this should be "
+                          "your __Minecraft__ username, not your Discord username.")
 
 
 async def get_mojang_from_uuid(uuid):
