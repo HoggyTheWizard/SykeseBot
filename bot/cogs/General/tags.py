@@ -24,5 +24,22 @@ class tags(commands.Cog):
                                 inline=tag_object["fields"][item]["inline"])
             await ctx.send(embed=embed)
 
+    @commands.command()
+    async def tags(self, ctx):
+        string = "**Callable Tags**\n\n"
+        total_tags = len(tag_list)
+        count = 1
+
+        for tag in tag_list:
+
+            if count != total_tags:
+                string += f"{tag}, "
+
+            else:
+                string += f"{tag}"
+            count += 1
+
+        await ctx.send(string)
+
 def setup(bot):
     bot.add_cog(tags(bot))
