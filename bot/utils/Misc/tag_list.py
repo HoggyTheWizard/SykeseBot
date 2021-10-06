@@ -61,6 +61,12 @@ tag_list = {
                 "verification channel with a link to your NameMC account.",
                 "inline": False
             },
+            5: {
+                "name": "I don't want people to know what my Minecraft account is. What do I do?",
+                "value": "You can toggle your profile visibility via the +toggleprofile command. Note that staff "
+                "members will still be able to access this information.",
+                "inline": False
+            },
         }
     }
 }
