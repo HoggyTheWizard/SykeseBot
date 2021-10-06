@@ -17,7 +17,8 @@ class tags(commands.Cog):
         if tag_object is None:
             await ctx.send("Invalid tag! Please use the command `/tags` to view a list of tags.")
         else:
-            embed = discord.Embed(title=tag_object["embedTitle"], color=tag_object["embedColor"])
+            embed = discord.Embed(title=tag_object["embedTitle"], description=tag_object["embedDescription"],
+                                  color=tag_object["embedColor"])
             for item in tag_object["fields"]:
                 embed.add_field(name=tag_object["fields"][item]["name"],
                                 value=tag_object["fields"][item]["value"],

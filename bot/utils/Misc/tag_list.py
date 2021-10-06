@@ -68,5 +68,14 @@ tag_list = {
                 "inline": False
             },
         }
-    }
+    },
+
+    "verify reason": {
+        "embedTitle": "The Purpose of Verification",
+        "embedDescription": "It's clear that some users don't understand why verification is necessary. We have this "
+        "system for a myriad of reasons, including but not limited to:\n\n-Knowing who you are\n-Alt prevention\n"
+        "-Raid prevention\n-Incorporating more game-tailored features into the bot\n-Moderation",
+        "embedColor": discord.Color.blue(),
+        "fields": {},
+        }
 }
