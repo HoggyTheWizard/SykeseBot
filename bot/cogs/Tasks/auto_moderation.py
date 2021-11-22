@@ -11,7 +11,6 @@ class auto_moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     # Create exception for higher roled people posting tenor links
     @commands.Cog.listener()
     async def on_message(self, message):

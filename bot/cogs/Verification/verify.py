@@ -39,7 +39,8 @@ class verify_commands(commands.Cog):
                 else:
                     account = discord_account
                 await ctx.send(f"Your accounts don't match!\n\nYour Account: {str(ctx.message.author)}\n"
-                               f"Linked Account: {account}")
+                               f"Linked Account: {account}\n\nYou either need to change your current account to match "
+                               "your linked account or update your linked account.")
 
             elif str(ctx.author) == player["player"]["socialMedia"]["links"]["DISCORD"]:
                 await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
