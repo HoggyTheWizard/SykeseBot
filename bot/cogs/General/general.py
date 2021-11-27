@@ -1,7 +1,9 @@
 from discord.ext import commands
+from discord.commands import slash_command as slash, Option
+from variables import test_guilds
 from bot.utils.Misc.general import get_mojang_from_uuid
 from bot.utils.Checks.channel_checks import channel_restricted
-from bot.utils.Checks.user_checks import is_verified
+from bot.utils.Checks.user_checks import is_verified, group_check
 from main import main_db
 import discord
 users = main_db["users"]
@@ -11,15 +13,15 @@ class general(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description="Displays the ping of the bot.")
+    @slash(description="Displays the ping of the bot.", guild_ids=test_guilds)
     @channel_restricted(users=users)
     async def ping(self, ctx):
-        await ctx.send(f"🏓 Pong ({round(self.bot.latency*1000)}ms)")
+        await ctx.respond(f"🏓 Pong ({round(self.bot.latency*1000)}ms)")
 
-    @commands.command(description="Displays the account a user is linked to.")
+    @slash(description="Displays the account a user is linked to.", guild_ids=test_guilds)
     @channel_restricted(users=users)
     @is_verified(users=users)
-    async def profile(self, ctx, member: discord.Member = None):
+    async def profile(self, ctx, member: Option(discord.Member, "The user you want to view the profile of.") = None):
         if member is None:
             user = ctx.author
             account_type = "self"
@@ -30,9 +32,9 @@ class general(commands.Cog):
         collection = users.find_one({"id": user.id})
 
         if account_type == "other" and collection.get("publicProfile", True) is False \
-                and collection.get("isStaff", False) is False:
+                and group_check(ctx.author, 90) is False:
 
-            await ctx.send("This user has indicated that they do not want their linked account to be public. "
+            await ctx.respond("This user has indicated that they do not want their linked account to be public. "
                            "As such, this information is only available to server staff.")
         elif collection is not None:
             mojang = await get_mojang_from_uuid(uuid=collection["uuid"])
@@ -44,11 +46,11 @@ class general(commands.Cog):
             embed = discord.Embed(title=f"{str(user)}'s Profile", color=discord.Color.blue())
             embed.add_field(name="Linked Account:", value=username, inline=False)
             embed.add_field(name="UUID:", value=collection["uuid"], inline=False)
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
         else:
-            await ctx.send("Couldn't find any data for this user.")
+            await ctx.respond("Couldn't find any data for this user.")
 
-    @commands.command(description="Toggle whether or not your Minecraft account is publicly shown.")
+    @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=test_guilds)
     @channel_restricted(users=users)
     @is_verified(users=users)
     async def toggleprofile(self, ctx):
@@ -60,7 +62,7 @@ class general(commands.Cog):
         else:
             new_setting = True
         users.update_one({"id": ctx.author.id}, {"$set": {"publicProfile": new_setting}})
-        await ctx.send(f"Successfully set your public profile status to `{new_setting}`")
+        await ctx.respond(f"Successfully set your public profile status to `{new_setting}`")
 
 
 def setup(bot):
