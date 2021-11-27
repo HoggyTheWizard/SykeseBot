@@ -13,8 +13,8 @@ class staff_management(commands.Cog):
         self.bot = bot
 
     @commands.group(hidden=True)
-    @channel_restricted(users=users)
-    @is_staff(users=users, permission_level=2)
+    @channel_restricted()
+    @is_staff(users=users)
     async def staff(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send("Please use a subcommand:\n"
@@ -22,8 +22,8 @@ class staff_management(commands.Cog):
                            "+staff remove <user> - Removes staff permissions from a user.")
 
     @staff.command(hidden=True)
-    @channel_restricted(users=users)
-    @is_staff(users=users, permission_level=2)
+    @channel_restricted()
+    @is_staff(users=users)
     async def add(self, ctx, member: discord.Member, permission_level):
         user = users.find_one({"id": member.id})
         if user is None:
@@ -35,8 +35,8 @@ class staff_management(commands.Cog):
                            f"`{permission_level}`")
 
     @staff.command(hidden=True)
-    @channel_restricted(users=users)
-    @is_staff(users=users, permission_level=2)
+    @channel_restricted()
+    @is_staff(users=users)
     async def remove(self, ctx, member: discord.Member):
         user = users.find_one({"id": member.id})
         if user is None:
