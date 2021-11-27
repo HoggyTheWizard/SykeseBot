@@ -1,4 +1,6 @@
 from discord.ext import commands
+from discord.commands import slash_command as slash
+from variables import test_guilds
 from main import main_db
 from bot.utils.Misc.general import aiohttp_json, get_mojang_from_username
 from bot.utils.Checks.channel_checks import channel_restricted
@@ -8,6 +10,7 @@ from datetime import datetime
 import discord
 import config
 
+
 users = main_db["users"]
 
 
@@ -15,12 +18,12 @@ class verify_commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description="Links a Minecraft account to your Discord account.")
+    @slash(description="Links a Minecraft account to your Discord account.", guild_ids=test_guilds)
     @commands.guild_only()
-    @channel_restricted(users=users)
+    @channel_restricted()
     async def verify(self, ctx, username):
         if users.find_one({"id": ctx.author.id}):
-            await ctx.send("You're already verified to the account "
+            await ctx.respond("You're already verified to the account "
                            f"`{users.find_one({'id' : ctx.author.id}).get('uuid', 'ERROR')}`")
         else:
             mojang = await get_mojang_from_username(username=username)
@@ -29,7 +32,7 @@ class verify_commands(commands.Cog):
             try:
                 discord_account = player["player"]["socialMedia"]["links"]["DISCORD"]
             except:
-                await ctx.send("You need to link your Discord account to Hypixel! If you're unsure of how to do this, "
+                await ctx.respond("You need to link your Discord account to Hypixel! If you're unsure of how to do this, "
                                "please view the gif below.\nhttps://imgur.com/2ZRQzEC.gif")
                 return
 
@@ -38,7 +41,7 @@ class verify_commands(commands.Cog):
                     account = "Blocked linked account due to it being an invite link."
                 else:
                     account = discord_account
-                await ctx.send(f"Your accounts don't match!\n\nYour Account: {str(ctx.message.author)}\n"
+                await ctx.respond(f"Your accounts don't match!\n\nYour Account: {str(ctx.message.author)}\n"
                                f"Linked Account: {account}\n\nYou either need to change your current account to match "
                                "your linked account or update your linked account.")
 
@@ -46,18 +49,18 @@ class verify_commands(commands.Cog):
                 await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
                 users.insert_one({"id": ctx.author.id, "uuid": mojang["id"],
                                   "verifiedAt": datetime.timestamp(datetime.now())})
-                await ctx.send("Successfully verified!")
+                await ctx.respond("Successfully verified!")
 
                 try:
                     await ctx.author.remove_roles(ctx.guild.get_role(unverified_role_id))
                 except:
                     pass
             else:
-                await ctx.send("An unexpected error has occurred.")
+                await ctx.respond("An unexpected error has occurred.")
 
     @commands.command(hidden=True)
     @commands.guild_only()
-    @channel_restricted(users=users)
+    @channel_restricted()
     @is_staff(users=users)
     async def forceverify(self, ctx, discord_user: discord.Member, username):
         if users.find_one({"id": discord_user.id}):
