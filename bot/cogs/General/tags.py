@@ -11,7 +11,7 @@ class tags(commands.Cog):
         self.bot = bot
 
     @commands.group()
-    @channel_restricted(users=users)
+    @channel_restricted()
     async def tag(self, ctx, *, tag_name):
         tag_object = tag_list.get(tag_name)
         if tag_object is None:
