@@ -14,12 +14,12 @@ class general(commands.Cog):
         self.bot = bot
 
     @slash(description="Displays the ping of the bot.", guild_ids=test_guilds)
-    @channel_restricted(users=users)
+    @channel_restricted()
     async def ping(self, ctx):
         await ctx.respond(f"🏓 Pong ({round(self.bot.latency*1000)}ms)")
 
     @slash(description="Displays the account a user is linked to.", guild_ids=test_guilds)
-    @channel_restricted(users=users)
+    @channel_restricted()
     @is_verified(users=users)
     async def profile(self, ctx, member: Option(discord.Member, "The user you want to view the profile of.") = None):
         if member is None:
@@ -51,7 +51,7 @@ class general(commands.Cog):
             await ctx.respond("Couldn't find any data for this user.")
 
     @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=test_guilds)
-    @channel_restricted(users=users)
+    @channel_restricted()
     @is_verified(users=users)
     async def toggleprofile(self, ctx):
         user = users.find_one({"id": ctx.author.id})
