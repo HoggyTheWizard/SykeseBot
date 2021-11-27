@@ -14,7 +14,9 @@ class auto_moderation(commands.Cog):
     # Create exception for higher roled people posting tenor links
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.guild.id == 707963219536248982 and host != "master":
+        if message.type == discord.MessageType.application_command:
+            return
+        elif message.guild.id == 707963219536248982 and host != "master":
 
             if any(x in message.content for x in blacklisted_domains):
                 try:
