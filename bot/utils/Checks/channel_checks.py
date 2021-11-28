@@ -10,15 +10,17 @@ class channel_checks(commands.CommandError):
 
 def channel_restricted():
     async def predicate(ctx):
+        if ctx.guild.id is not 889697074491293736:
+            return True
         if ctx.channel.id not in whitelisted_channel_ids:
             try:
                 if group_check(ctx.author, 90):
                     return True
                 else:
-                    await ctx.message.delete()
+                    await ctx.respond("You cannot use this command in this channel!", ephemeral=True)
                     return
             except:
-                await ctx.message.delete()
+                await ctx.respond("You cannot use this command in this channel!", ephemeral=True)
                 return
         else:
             return True
