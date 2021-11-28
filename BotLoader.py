@@ -1,4 +1,5 @@
 from discord.ext import commands
+from discord.commands import commands as application_commands
 from pathlib import Path
 import logging
 import config
@@ -32,3 +33,12 @@ class BotLoader(commands.Bot):
         log.error("", exc_info=exc)
 
         await ctx.send(exc)
+
+    async def on_application_command_error(self, ctx, error):
+        if isinstance(error, application_commands.CheckFailure):
+            return
+        else:
+            try:
+                await ctx.respond(error)
+            except:
+                await ctx.send(error)
