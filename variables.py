@@ -11,10 +11,11 @@ test_guilds = [
     707963219536248982  # test server
 ]
 
-permission_tiers = {
+group_tiers = {
+    889717866239234088: 0,  # friend (everyone)
     890700948710772766: 1,  # super friend
-    892475435290607646: 2,  # blue booster
-    911038229862563911: 3,  # birthday
-    891123241765179472: 90,  # chat moderator
-    889717645300072529: 100,  # admin
+    892475435290607646: 1,  # blue booster
+    911038229862563911: 1,  # birthday
+    891123241765179472: 4,  # chat moderator
+    889717645300072529: 5,  # admin (currently sykese's custom role)
 }
