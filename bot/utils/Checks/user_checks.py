@@ -1,5 +1,5 @@
 from discord.ext import commands
-from variables import permission_tiers
+from variables import group_tiers
 import discord
 
 
@@ -36,23 +36,3 @@ def is_staff(users):
             return True
     return commands.check(predicate)
 
-
-def group_check(author: discord.Member, minimum_permission_level: int):
-    role_list = []
-    if not len(author.roles):
-        return False
-
-    for role in author.roles:
-        role_list.append(role.id)
-
-    highest_role_permission = 0
-
-    for role_id in role_list:
-        if permission_tiers.get(role_id, None) is not None:
-            if permission_tiers[role_id] > highest_role_permission:
-                highest_role_permission = permission_tiers[role_id]
-
-    if highest_role_permission >= minimum_permission_level:
-        return True
-    else:
-        return False
