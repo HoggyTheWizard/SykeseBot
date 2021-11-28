@@ -2,7 +2,6 @@ from discord.commands import slash_command as slash, Option
 from discord.ext import commands
 from bot.utils.Checks.user_checks import is_verified
 from variables import test_guilds
-from main import main_db
 import datetime
 from main import main_db
 from config import host
@@ -27,6 +26,7 @@ class birthday(commands.Cog):
             await ctx.respond(f"Successfully set your birthday to {month}/{day}/{year}")
         except:
             await ctx.respond("Invalid date provided!")
+
 
 def setup(bot):
     bot.add_cog(birthday(bot))
