@@ -16,7 +16,7 @@ class group_sync(commands.Cog):
     @tasks.loop(seconds=60)
     async def sync_user_groups(self):
         print("Starting sync task...")
-        if host != "master":
+        if host == "master":
             guild = self.bot.get_guild(889697074491293736)
             for member in guild.members:
                 if not len(member.roles):

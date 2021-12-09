@@ -3,7 +3,7 @@ from discord.commands import slash_command as slash, Option
 from variables import test_guilds
 from bot.utils.Misc.general import get_mojang_from_uuid
 from bot.utils.Checks.channel_checks import channel_restricted
-from bot.utils.Checks.user_checks import is_verified, group_check
+from bot.utils.Checks.user_checks import is_verified
 from main import main_db
 import discord
 users = main_db["users"]
@@ -31,8 +31,8 @@ class general(commands.Cog):
 
         collection = users.find_one({"id": user.id})
 
-        if account_type == "other" and collection.get("publicProfile", True) is False \
-                and group_check(ctx.author, 90) is False:
+        if account_type == "other" and collection.get("publicProfile", True) is False: #\
+                #and group_check(ctx.author, 90) is False:
 
             await ctx.respond("This user has indicated that they do not want their linked account to be public. "
                            "As such, this information is only available to server staff.")
