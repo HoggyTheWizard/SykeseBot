@@ -1,9 +1,14 @@
 from discord.ext import commands
 from main import main_db
 from bot.utils.Checks.channel_checks import channel_restricted
+from bot.utils.Misc.permissions import get_all_files
 from bot.utils.Checks.user_checks import is_staff
 from variables import mod_role_id
+import pathlib
 import discord
+import pathlib
+import json
+import os
 
 users = main_db["users"]
 
@@ -58,6 +63,49 @@ class staff_management(commands.Cog):
                 await ctx.send("An unexpected error occurred.. please tell a developer to check the console.")
             await ctx.send(f"Successfully removed staff from `{str(member)}`")
 
+    @commands.command(hidden=True)
+    @is_staff(users)
+    async def set_perm(self, ctx, role: discord.Role, name: str):
+        with open(f"{pathlib.Path().resolve()}/bot/utils/Misc/Permissions/{str(role.id)}.json", "r+") as file:
+            new_json = {
+                "id": name,
+            }
+            data = json.load(file)
+            data[name].append(new_json)
+            file.seek(0)
+            json.dump(data, file, indent=4)
+            await ctx.send(f"Successfully added `{name}` permission to the `{role.name}` role.")
+
+    @commands.command()
+    async def boop(self, ctx):
+        await ctx.send(get_all_files())
+
+    @commands.command(hidden=True)
+    @is_staff(users)
+    async def remove_perm(self, ctx, role: discord.Role, name: str):
+        with open(f"{pathlib.Path().resolve()}/bot/utils/Misc/Permissions/{str(role.id)}.json", "r+") as file:
+            new_json = {
+                "id": name,
+            }
+            data = json.load(file)
+            data["emp_details"].append(new_json)
+            file.seek(0)
+            json.dump(data, file, indent=4)
+            await ctx.send(f"Successfully added `{name}` permission to the `{role.name}` role.")
+
+    @commands.command(hidden=True)
+    async def set_global_perm(self, ctx, name: str):
+        directory = f"{pathlib.Path().resolve()}/bot/utils/Misc/Permissions/"
+        for file_name in os.listdir(directory):
+            with open(f"{pathlib.Path().resolve()}/bot/utils/Misc/Permissions/{file_name}", "r+") as file:
+                new_json = {
+                    "id": name,
+                }
+                data = json.load(file)
+                data["emp_details"].append(new_json)
+                file.seek(0)
+                json.dump(data, file, indent=4)
+        await ctx.send(f"Successfully set `{name}` as a global permission.")
 
 def setup(bot):
     bot.add_cog(staff_management(bot))
