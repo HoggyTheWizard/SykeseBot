@@ -1,7 +1,9 @@
 from discord.ext import commands
 from variables import group_tiers
+from bot.utils.Misc.permissions import generate_permission_list, highest_perm_role
 import discord
-
+import pathlib
+import json
 
 class user_checks(commands.CommandError):
     pass
@@ -36,3 +38,21 @@ def is_staff(users):
             return True
     return commands.check(predicate)
 
+def check_perms(author: discord.Member, required_permissions: list, db_override=None):
+    role = highest_perm_role(author)
+    if role is None:
+        return False
+    else:
+        perm_list = generate_permission_list(role)
+        if not len(perm_list):
+            return False
+        # continue here
+
+def perms(required_permissions: list):
+    async def predicate(ctx):
+        highest_role = highest_perm_role(ctx.author)
+        if highest_role is None:
+            return False
+        else:
+            check_perms(highest_role, required_permissions)
+    return commands.check(predicate)
