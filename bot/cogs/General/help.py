@@ -1,15 +1,8 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash
 from variables import test_guilds
-from bot.utils.Misc.help_references import cog_name_formatted
-from main import main_db
-from config import prefixes
 import discord
-import math
-import re
-users = main_db["users"]
 
-# Credit to F1scherman on the Mystic Fyre Bot project and MenuDocs
 
 class help_command(commands.Cog):
     def __init__(self, bot):
