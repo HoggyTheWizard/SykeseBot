@@ -8,7 +8,7 @@ def permission_file_names():
     return files
 
 def highest_perm_role(author: discord.Member):
-    if not len(author.roles):
+    if len(author.roles) is False:
         return None
     else:
         files = permission_file_names()
@@ -21,7 +21,7 @@ def highest_perm_role(author: discord.Member):
 
 def generate_permission_list(perm_id: str):
     perm_list = []
-    with open(f"{pathlib.Path().resolve()}/bot/utils/Misc/Permissions/{perm_id}.json", "w") as file:
+    with open(f"{pathlib.Path().resolve()}/bot/utils/Misc/Permissions/{perm_id}.json", "r+") as file:
         data = json.load(file)
         for permission in data.values():
             perm_list.append(permission["id"])
