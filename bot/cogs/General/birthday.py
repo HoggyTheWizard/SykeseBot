@@ -17,7 +17,6 @@ class birthday(commands.Cog):
         self.bot = bot
         self.birthday_loop.start()
 
-    # need to check non-formatted numbers such as "4" instead of "04"
     @slash(description="Add your birthday so you get the birthday role on your birthday.", guild_ids=test_guilds)
     @is_verified()
     async def birthday(self, ctx, month: Option(int, "The month you were born (e.g. 04)"),
