@@ -63,9 +63,9 @@ class leveling_main(commands.Cog):
 
         if "Leveling" not in collection:
             if user_type == "other":
-                await ctx.send(f"Could not find any leveling data for {str(user)}")
+                await ctx.respond(f"Could not find any leveling data for {str(user)}")
             elif user_type == "self":
-                await ctx.send(f"You don't have any leveling data tied to this account.")
+                await ctx.respond(f"You don't have any leveling data tied to this account.")
 
         else:
             lvl = collection["Leveling"].get("level", 0)
@@ -79,7 +79,7 @@ class leveling_main(commands.Cog):
             embed.add_field(name="XP To Next Level:",
                             value="{:,}".format(5 * (lvl ** 2) + (50 * lvl) + 100 - exp), inline=False)
             embed.set_footer(text="Have a nice day!", icon_url=ctx.guild.icon.url)
-            await ctx.send(embed=embed)
+            await ctx.respond(embed=embed)
 
 
 def setup(bot):
