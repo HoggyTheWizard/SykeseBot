@@ -2,7 +2,6 @@ from discord.ext import commands
 from discord.commands import commands as application_commands
 from pathlib import Path
 import logging
-import config
 
 log = logging.getLogger(__name__)
 
