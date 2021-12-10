@@ -20,7 +20,7 @@ class general(commands.Cog):
 
     @slash(description="Displays the account a user is linked to.", guild_ids=test_guilds)
     @channel_restricted()
-    @is_verified(users=users)
+    @is_verified()
     async def profile(self, ctx, member: Option(discord.Member, "The user you want to view the profile of.") = None):
         if member is None:
             user = ctx.author
@@ -52,7 +52,7 @@ class general(commands.Cog):
 
     @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=test_guilds)
     @channel_restricted()
-    @is_verified(users=users)
+    @is_verified()
     async def toggleprofile(self, ctx):
         user = users.find_one({"id": ctx.author.id})
         if user.get("publicProfile", True) is True:
