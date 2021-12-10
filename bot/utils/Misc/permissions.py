@@ -2,6 +2,9 @@ import json
 import pathlib
 import discord
 
+# TODO
+# - Inheritance. Add an option for a role to inherit permissions from another role.
+
 def permission_file_names():
     path = pathlib.Path(f"{pathlib.Path().resolve()}/bot/utils/Misc/Permissions/").glob("**/*")
     files = [file.name.replace(".json", "") for file in path if file.is_file()]
