@@ -1,4 +1,5 @@
 from discord.ext import commands
+from bot.utils.Checks.user_checks import check_perms
 from main import main_db
 from config import host
 import discord
@@ -19,14 +20,10 @@ class auto_moderation(commands.Cog):
         elif message.guild.id == 707963219536248982 and host != "master":
 
             if any(x in message.content for x in blacklisted_domains):
-                try:
-                    permission_level = users.find_one({"id": message.author.id})["permissionLevel"]
-                except:
-                    permission_level = 0
-
-                if permission_level < 1 and message.channel.id != 836990571012030465:
+                if check_perms(message.author, ["bypass.blacklistedDomains"]) is True:
+                    return
+                else:
                     await message.delete()
-
 
 def setup(bot):
     bot.add_cog(auto_moderation(bot))
