@@ -3,9 +3,10 @@ from discord.commands import slash_command as slash, Option
 from variables import test_guilds
 from bot.utils.Misc.general import get_mojang_from_uuid
 from bot.utils.Checks.channel_checks import channel_restricted
-from bot.utils.Checks.user_checks import is_verified
+from bot.utils.Checks.user_checks import is_verified, check_perms
 from main import main_db
 import discord
+
 users = main_db["users"]
 
 
@@ -16,7 +17,7 @@ class general(commands.Cog):
     @slash(description="Displays the ping of the bot.", guild_ids=test_guilds)
     @channel_restricted()
     async def ping(self, ctx):
-        await ctx.respond(f"🏓 Pong ({round(self.bot.latency*1000)}ms)")
+        await ctx.respond(f"🏓 Pong ({round(self.bot.latency * 1000)}ms)")
 
     @slash(description="Displays the account a user is linked to.", guild_ids=test_guilds)
     @channel_restricted()
@@ -31,11 +32,11 @@ class general(commands.Cog):
 
         collection = users.find_one({"id": user.id})
 
-        if account_type == "other" and collection.get("publicProfile", True) is False: #\
-                #and group_check(ctx.author, 90) is False:
+        if account_type == "other" and collection.get("publicProfile", True) is False and \
+                check_perms(ctx.author, ["staff.viewPrivateProfile"]) is False:
 
             await ctx.respond("This user has indicated that they do not want their linked account to be public. "
-                           "As such, this information is only available to server staff.")
+                              "As such, this information is only available to server staff.")
         elif collection is not None:
             mojang = await get_mojang_from_uuid(uuid=collection["uuid"])
             if mojang is None:
