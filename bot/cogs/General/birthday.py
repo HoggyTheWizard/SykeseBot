@@ -19,7 +19,7 @@ class birthday(commands.Cog):
 
     # need to check non-formatted numbers such as "4" instead of "04"
     @slash(description="Add your birthday so you get the birthday role on your birthday.", guild_ids=test_guilds)
-    @is_verified(users=users)
+    @is_verified()
     async def birthday(self, ctx, month: Option(int, "The month you were born (e.g. 04)"),
                        day: Option(int, "The day you were born (e.g. 24)"),
                        year: Option(int, "The year you were born (e.g. 2003)")):
