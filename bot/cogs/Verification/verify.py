@@ -4,7 +4,7 @@ from variables import test_guilds
 from main import main_db
 from bot.utils.Misc.general import aiohttp_json, get_mojang_from_username
 from bot.utils.Checks.channel_checks import channel_restricted
-from bot.utils.Checks.user_checks import is_staff
+from bot.utils.Checks.user_checks import perms
 from variables import verified_role_id, unverified_role_id
 from datetime import datetime
 import discord
@@ -61,7 +61,7 @@ class verify_commands(commands.Cog):
     @commands.command(hidden=True)
     @commands.guild_only()
     @channel_restricted()
-    @is_staff(users=users)
+    @perms(["staff.forceVerify"])
     async def forceverify(self, ctx, discord_user: discord.Member, username):
         if users.find_one({"id": discord_user.id}):
             await ctx.send("This user is already verified to the account "
@@ -104,12 +104,11 @@ class verify_commands(commands.Cog):
                                 "be notified for certain events, such as when Sykese uploads a video to his channel. "
                                 "These are completely optional, however we recommend that you enable them.",
                                 inline=False)
-                embed.set_footer(icon_url=member.guild.icon_url, text="Hope to see you around!")
+                embed.set_footer(icon_url=member.guild.icon.url, text="Hope to see you around!")
                 try:
                     await member.send(embed=embed)
                 except:
                     return
-
 
 def setup(bot):
     bot.add_cog(verify_commands(bot))
