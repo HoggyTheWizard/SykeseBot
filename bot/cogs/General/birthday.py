@@ -32,10 +32,16 @@ class birthday(commands.Cog):
 
         try:
             date = datetime.datetime(month=month, day=day, year=year)
-            current_year = int(datetime.date.today().year)
-            if int(year) > current_year:
-                users.update_one({"id": ctx.author.id}, {"$set": {"Birthday.date": date.strftime("%m%d"),
-                                                                "Birthday.year": year}})
+            if int(datetime.date.today().year) - year < 13:
+                await ctx.guild.get_channel(772911390453268522).send(f"{str(ctx.author)} ({ctx.author.id}) "
+                                                   "set themselves as a date younger than 13 years old via the "
+                                                   "birthday command. Discord does not allow users younger than 13 "
+                                                   "years old to use their service. Please investigate this "
+                                                   "situation further.")
+
+            users.update_one({"id": ctx.author.id}, {"$set": {
+                "Birthday.date": str(date.strftime("%m%d")),
+                "Birthday.year": str(date.strftime("%Y"))}})
             await ctx.respond(f"Successfully set your birthday to {month}/{day}/{year}")
         except:
             await ctx.respond("Invalid date provided!")
