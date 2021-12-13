@@ -54,11 +54,22 @@ class birthday(commands.Cog):
         if current_time != "0:00" and host != "main":  # for testing
             #guild = self.bot.get_guild(889697074491293736)
             #channel = guild.get_channel(890085670696124436)
+            #role =
             guild = self.bot.get_guild(707963219536248982)
             channel = guild.get_channel(708020912397484163)
+            role = guild.get_role(708010217706618983)
             for user in users.find({}):
                 if "Birthday" not in user or user["Birthday"].get("date", None) is None:
                     continue
+                elif user.get("Birthday", {}).get("birthdayActive", False) is True:
+                    if current_date != user["Birthday"]["date"]:
+                        users.update_one({"id": user.get("id")}, {"$set": {
+                            "Birthday.birthdayActive": False}})
+                        try:
+                            await guild.get_member(user.get("id")).remove_roles(role)
+                        except:
+                            continue
+
                 elif current_date == user["Birthday"]["date"]:
                     if guild.get_member(user.get("id", None)) is None:
                         continue
@@ -66,7 +77,9 @@ class birthday(commands.Cog):
                         member = guild.get_member(user["id"])
                         await channel.send(f"Happy Birthday to <@{member.id}>! Enjoy the birthday role "
                                            "for the next 24 hours.")
-                        await member.add_roles(guild.get_role(911038229862563911))
+                        await member.add_roles(role)
+                        users.update_one({"id": user.get("id")}, {"$set": {
+                            "Birthday.birthdayActive": True}})
             await asyncio.sleep(60)
 
     @birthday_loop.before_loop
