@@ -66,7 +66,7 @@ class birthday(commands.Cog):
                         member = guild.get_member(user["id"])
                         await channel.send(f"Happy Birthday to <@{member.id}>! Enjoy the birthday role "
                                            "for the next 24 hours.")
-                        #await guild.get_member(user["id"]).add_roles(guild.get_role(911038229862563911))
+                        await member.add_roles(guild.get_role(911038229862563911))
             await asyncio.sleep(60)
 
     @birthday_loop.before_loop
