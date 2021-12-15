@@ -81,6 +81,38 @@ class leveling_main(commands.Cog):
             embed.set_footer(text="Have a nice day!", icon_url=ctx.guild.icon.url)
             await ctx.respond(embed=embed)
 
+    @slash(guild_ids=test_guilds, description="A leaderboard displaying the top exp earners in our server.")
+    async def level_leaderboard(self, ctx):
+        embed = discord.Embed(title="Level Leaderboard",
+                              description="A leaderboard displaying the top exp earners in our server.",
+                              color=ctx.author.color)
+
+        lb = users.find({}).sort("Leveling.exp", -1)
+        i = 0
+        for user in lb:
+            if "Leveling" not in user:
+                continue
+            else:
+                i += 1
+                embed.add_field(name=f"#{i}",
+                                value=f"<@{user['id']}> | Level {user['Leveling'].get('level', 0)} "
+                                      f"({'{:,}'.format(user['Leveling'].get('exp', 0))} exp)", inline=False)
+            if i == 15:
+                break
+
+        author = users.find_one({"id": ctx.author.id})
+
+        if author is None:
+            footer = "Level 0 (0 exp)"
+
+        elif author.get("Leveling", None) is None:
+            footer = "Level 0 (0 exp)"
+
+        else:
+            footer = (f"Level {'{:,}'.format(author['Leveling'].get('level', 0))} "
+                      f"({'{:,}'.format(author['Leveling'].get('exp', 0))} exp)")
+        embed.set_footer(text=footer, icon_url=ctx.author.avatar.url)
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(leveling_main(bot))
