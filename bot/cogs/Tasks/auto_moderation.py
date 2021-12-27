@@ -17,7 +17,7 @@ class auto_moderation(commands.Cog):
     async def on_message(self, message):
         if message.type == discord.MessageType.application_command:
             return
-        elif message.guild.id == 707963219536248982 and host != "master":
+        elif message.guild.id == 889697074491293736 and host == "master":
 
             if any(x in message.content for x in blacklisted_domains):
                 if check_perms(message.author, ["bypass.blacklistedDomains"]) is True:

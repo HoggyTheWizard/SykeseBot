@@ -33,7 +33,7 @@ class birthday(commands.Cog):
         try:
             date = datetime.datetime(month=month, day=day, year=year)
             if int(datetime.date.today().year) - year < 13:
-                await ctx.guild.get_channel(772911390453268522).send(f"{str(ctx.author)} ({ctx.author.id}) "
+                await ctx.guild.get_channel(889697149279956993).send(f"{str(ctx.author)} ({ctx.author.id}) "
                                                    "set themselves as a date younger than 13 years old via the "
                                                    "birthday command. Discord does not allow users younger than 13 "
                                                    "years old to use their service. Please investigate this "
@@ -51,13 +51,10 @@ class birthday(commands.Cog):
         date = datetime.datetime.now(pytz.timezone("US/Eastern"))
         current_time = date.strftime("%H:%M")
         current_date = date.strftime("%m%d")
-        if current_time != "0:00" and host != "main":  # for testing
-            #guild = self.bot.get_guild(889697074491293736)
-            #channel = guild.get_channel(890085670696124436)
-            #role =
-            guild = self.bot.get_guild(707963219536248982)
-            channel = guild.get_channel(708020912397484163)
-            role = guild.get_role(708010217706618983)
+        if current_time == "0:00" and host == "main":
+            guild = self.bot.get_guild(889697074491293736)
+            channel = guild.get_channel(889697074491293740)
+            role = guild.get_role(911038229862563911)
             for user in users.find({}):
                 if "Birthday" not in user or user["Birthday"].get("date", None) is None:
                     continue
