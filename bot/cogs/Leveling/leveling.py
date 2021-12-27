@@ -1,5 +1,5 @@
 from discord.commands import slash_command as slash
-from bot.utils.Leveling.leveling import LevelingMain as leveling
+from bot.utils.Leveling.leveling import LevelingMain as leveling, data
 from bot.utils.Checks.user_checks import is_verified
 from variables import test_guilds
 from discord.ext import commands
@@ -113,6 +113,7 @@ class leveling_main(commands.Cog):
                       f"({'{:,}'.format(author['Leveling'].get('exp', 0))} exp)")
         embed.set_footer(text=footer, icon_url=ctx.author.avatar.url)
         await ctx.respond(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(leveling_main(bot))

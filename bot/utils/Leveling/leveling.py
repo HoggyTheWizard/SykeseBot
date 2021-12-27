@@ -35,23 +35,3 @@ class LevelingMain(commands.CommandError):
                 await message.add_reaction(str(emoji))
             elif lvl % 10 == 0:
                 await message.channel.send(f"Congrats <@{message.author.id}>, you're now level **{lvl}**!")
-
-    @staticmethod
-    def retroactive_leveling_hypixel(current_level, old_exp, added_exp):
-        exp_dynamic = old_exp
-        exp_left = added_exp
-        level = current_level
-
-        while exp_left > 0:
-            exp_to_next_level = 5 * (level ** 2) + (50 * level) + 100 - exp_dynamic
-
-            if exp_left >= exp_to_next_level:
-                exp_dynamic += exp_to_next_level
-                exp_left -= exp_to_next_level
-                level += 1
-
-            else:
-                exp_dynamic += exp_left
-                exp_left -= exp_left
-
-        return {"expAdded": exp_dynamic - old_exp, "levelsAdded": level - current_level, "exp": exp_dynamic, "level": level}
