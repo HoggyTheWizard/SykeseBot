@@ -28,7 +28,7 @@ class LevelingMain(commands.CommandError):
         levelup_xp_needed = 5 * (lvl ** 2) + (50 * lvl) + 100
         if exp >= levelup_xp_needed:
             users.update_one({"id": collection["id"]}, {"$set": {"Leveling.level": lvl + 1}})
-            emoji = self.bot.get_emoji(905569355507585035)
+            emoji = self.bot.get_emoji(891388066634285096)
             if lvl == 1:
                 await message.add_reaction(str(emoji))
             elif lvl % 5 == 0:
