@@ -25,5 +25,6 @@ class auto_moderation(commands.Cog):
                 else:
                     await message.delete()
 
+
 def setup(bot):
     bot.add_cog(auto_moderation(bot))
