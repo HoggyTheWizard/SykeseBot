@@ -1,5 +1,5 @@
 from discord.commands import slash_command as slash
-from bot.utils.Leveling.leveling import LevelingMain as leveling, data
+from bot.utils.Leveling.leveling import LevelingMain as leveling
 from bot.utils.Checks.user_checks import is_verified
 from variables import guilds
 from discord.ext import commands
