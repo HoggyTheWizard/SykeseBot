@@ -1,6 +1,6 @@
 from discord.ext import commands
 from bot.utils.Misc.permissions import generate_permission_list, highest_perm_role
-from variables import test_guilds
+from variables import guilds
 import discord
 
 
@@ -43,7 +43,7 @@ def perms(required_permissions: list):
         highest_role = highest_perm_role(ctx.author)
         if highest_role is None:
             return False
-        elif ctx.guild.id in test_guilds:
+        elif ctx.guild.id in guilds:
             return True
         else:
             return check_perms(ctx.author, required_permissions)

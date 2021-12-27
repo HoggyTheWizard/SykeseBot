@@ -1,6 +1,6 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash, Option
-from variables import test_guilds
+from variables import guilds
 from bot.utils.Misc.general import get_mojang_from_uuid
 from bot.utils.Checks.channel_checks import channel_restricted
 from bot.utils.Misc.cooldown import cooldown
@@ -15,13 +15,13 @@ class general(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash(description="Displays the ping of the bot.", guild_ids=test_guilds)
+    @slash(description="Displays the ping of the bot.", guild_ids=guilds)
     @channel_restricted()
     @cooldown(seconds=3)
     async def ping(self, ctx):
         await ctx.respond(f"🏓 Pong ({round(self.bot.latency * 1000)}ms)")
 
-    @slash(description="Displays the account a user is linked to.", guild_ids=test_guilds)
+    @slash(description="Displays the account a user is linked to.", guild_ids=guilds)
     @channel_restricted()
     @cooldown(seconds=5)
     @is_verified()
@@ -54,7 +54,7 @@ class general(commands.Cog):
         else:
             await ctx.respond("Couldn't find any data for this user.")
 
-    @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=test_guilds)
+    @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=guilds)
     @channel_restricted()
     @cooldown(seconds=5)
     @is_verified()

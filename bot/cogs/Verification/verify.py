@@ -1,6 +1,6 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash
-from variables import test_guilds
+from variables import guilds
 from main import main_db
 from bot.utils.Misc.general import aiohttp_json, get_mojang_from_username
 from bot.utils.Checks.channel_checks import channel_restricted
@@ -18,7 +18,7 @@ class verify_commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash(description="Links a Minecraft account to your Discord account.", guild_ids=test_guilds)
+    @slash(description="Links a Minecraft account to your Discord account.", guild_ids=guilds)
     @commands.guild_only()
     @channel_restricted()
     async def verify(self, ctx, username):

@@ -1,7 +1,7 @@
 from discord.commands import slash_command as slash
 from bot.utils.Leveling.leveling import LevelingMain as leveling, data
 from bot.utils.Checks.user_checks import is_verified
-from variables import test_guilds
+from variables import guilds
 from discord.ext import commands
 from main import main_db
 import random
@@ -48,7 +48,7 @@ class leveling_main(commands.Cog):
                                       "Leveling.lastTriggeredMessage": int(time.time())}})
                     await leveling.levelup(self, message, collection, leveling_object, users)
 
-    @slash(guild_ids=test_guilds)
+    @slash(guild_ids=guilds)
     @is_verified()
     async def level(self, ctx, other_user: discord.User = None):
 
@@ -81,7 +81,7 @@ class leveling_main(commands.Cog):
             embed.set_footer(text="Have a nice day!", icon_url=ctx.guild.icon.url)
             await ctx.respond(embed=embed)
 
-    @slash(guild_ids=test_guilds, description="A leaderboard displaying the top exp earners in our server.")
+    @slash(guild_ids=guilds, description="A leaderboard displaying the top exp earners in our server.")
     async def level_leaderboard(self, ctx):
         embed = discord.Embed(title="Level Leaderboard",
                               description="A leaderboard displaying the top exp earners in our server.",

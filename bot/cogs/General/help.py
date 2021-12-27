@@ -2,7 +2,7 @@ from discord.ext import commands
 from discord.commands import slash_command as slash
 from bot.utils.Misc.cooldown import cooldown
 from bot.utils.Checks.channel_checks import channel_restricted
-from variables import test_guilds
+from variables import guilds
 import discord
 
 
@@ -10,7 +10,7 @@ class help_command(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash(description="Displays an embed describing different aspects of the server.", guild_ids=test_guilds)
+    @slash(description="Displays an embed describing different aspects of the server.", guild_ids=guilds)
     @cooldown(seconds=10)
     @channel_restricted()
     async def help(self, ctx):
