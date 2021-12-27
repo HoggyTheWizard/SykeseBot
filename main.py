@@ -8,7 +8,7 @@ import config
 import pymongo
 import ssl
 cluster = pymongo.MongoClient(f"mongodb+srv://{database_user}:{database_password}@cluster0.2uexc.mongodb.net/"
-                              f"{main_db_name}?retryWrites=true&w=majority", ssl_cert_reqs=ssl.CERT_NONE)
+                              f"{main_db_name}?retryWrites=true&w=majority")
 main_db = cluster["main_data"]
 archived_db = cluster["archived_data"]
 settings = main_db["bot_settings"]

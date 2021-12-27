@@ -16,7 +16,7 @@ def get_author_role_ids(author: discord.Member):
         return role_ids
 
 
-def cooldown(seconds: int, mod_bypass: bool = True):
+def cooldown(seconds: int, mod_bypass: bool = False):
     async def predicate(ctx):
         if mod_bypass is True and mod_id in get_author_role_ids(ctx.author):
             return True
@@ -31,8 +31,9 @@ def cooldown(seconds: int, mod_bypass: bool = True):
                               f"({round(seconds - (time.time() - last_used))} seconds remaining)")
                     return False
             except:
-                command_cache[ctx.author.id][ctx.command.name] = {
-                    "timestamp": time.time()
-                }
+                command_cache[ctx.author.id] = {
+                        ctx.command.name: {
+                            "timestamp": time.time()}
+                    }
                 return True
     return commands.check(predicate)
