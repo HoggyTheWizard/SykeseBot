@@ -39,7 +39,7 @@ class flags(commands.Cog):
                 embed.add_field(name="Message Content:", value=message.content, inline=False)
                 channel = message.guild.get_channel(836990571012030465)
                 await channel.send(embed=embed)
-                await channel.send(f"{message.author.id}\n<@{mod_role_id}>")
+                await channel.send(f"{message.author.id}\n<@{mod_id}>")
 
 
 def setup(bot):
