@@ -1,6 +1,7 @@
 from discord.commands import slash_command as slash, Option
 from discord.ext import commands, tasks
 from bot.utils.Checks.user_checks import is_verified
+from bot.utils.Checks.channel_checks import channel_restricted
 from variables import guilds
 import datetime
 from main import main_db
@@ -19,6 +20,7 @@ class birthday(commands.Cog):
 
     @slash(description="Add your birthday so you get the birthday role on your birthday.", guild_ids=guilds)
     @is_verified()
+    @channel_restricted()
     async def birthday(self, ctx, month: Option(int, "The month you were born (e.g. 04)"),
                        day: Option(int, "The day you were born (e.g. 24)"),
                        year: Option(int, "The year you were born (e.g. 2003)")):

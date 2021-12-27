@@ -16,7 +16,6 @@ def is_verified():
             role_list = []
             for role in ctx.author.roles:
                 role_list.append(role.id)
-                print(role_list)
             if 893933214656233563 not in role_list:
                 return False
             else:
