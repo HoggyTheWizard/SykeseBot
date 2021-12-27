@@ -3,6 +3,7 @@ from discord.commands import slash_command as slash, Option
 from variables import test_guilds
 from bot.utils.Misc.general import get_mojang_from_uuid
 from bot.utils.Checks.channel_checks import channel_restricted
+from bot.utils.Misc.cooldown import cooldown
 from bot.utils.Checks.user_checks import is_verified, check_perms
 from main import main_db
 import discord
@@ -16,11 +17,13 @@ class general(commands.Cog):
 
     @slash(description="Displays the ping of the bot.", guild_ids=test_guilds)
     @channel_restricted()
+    @cooldown(seconds=3)
     async def ping(self, ctx):
         await ctx.respond(f"🏓 Pong ({round(self.bot.latency * 1000)}ms)")
 
     @slash(description="Displays the account a user is linked to.", guild_ids=test_guilds)
     @channel_restricted()
+    @cooldown(seconds=5)
     @is_verified()
     async def profile(self, ctx, member: Option(discord.Member, "The user you want to view the profile of.") = None):
         if member is None:
@@ -53,6 +56,7 @@ class general(commands.Cog):
 
     @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=test_guilds)
     @channel_restricted()
+    @cooldown(seconds=5)
     @is_verified()
     async def toggleprofile(self, ctx):
         user = users.find_one({"id": ctx.author.id})
