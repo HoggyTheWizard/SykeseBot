@@ -49,5 +49,6 @@ class staff_management(commands.Cog):
                 json.dump(data, file, indent=4)
         await ctx.send(f"Successfully set `{name}` as a global permission.")
 
+
 def setup(bot):
     bot.add_cog(staff_management(bot))
