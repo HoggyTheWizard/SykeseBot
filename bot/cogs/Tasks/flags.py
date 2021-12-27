@@ -1,5 +1,5 @@
 from discord.ext import commands
-from variables import mod_role_id
+from variables import mod_id
 from config import flagged_words, host
 import discord
 
