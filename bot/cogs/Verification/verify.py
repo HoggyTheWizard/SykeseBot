@@ -117,5 +117,6 @@ class verify_commands(commands.Cog):
                 except:
                     return
 
+
 def setup(bot):
     bot.add_cog(verify_commands(bot))
