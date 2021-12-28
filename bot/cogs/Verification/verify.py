@@ -41,7 +41,7 @@ class verify_commands(commands.Cog):
                     account = "Blocked linked account due to it being an invite link."
                 else:
                     account = discord_account
-                await ctx.respond(f"Your accounts don't match!\n\nYour Account: {str(ctx.message.author)}\n"
+                await ctx.respond(f"Your accounts don't match!\n\nYour Account: {str(ctx.author)}\n"
                                f"Linked Account: {account}\n\nYou either need to change your current account to match "
                                "your linked account or update your linked account.")
 
