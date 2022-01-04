@@ -70,6 +70,11 @@ class leveling_main(commands.Cog):
         else:
             lvl = collection["Leveling"].get("level", 0)
             exp = collection["Leveling"].get("exp", 0)
+            calculated_needed_xp = (5 * (lvl ** 2) + (50 * lvl) + 100 - exp)
+            if calculated_needed_xp < 0:
+                xp_needed = 1
+            else:
+                xp_needed = "{:,}".format(calculated_needed_xp)
 
             embed = discord.Embed(title=f"{str(user)}'s Level",
                                   description="Levels can be increased by chatting in the server.",
@@ -77,7 +82,7 @@ class leveling_main(commands.Cog):
             embed.add_field(name="Level:", value="{:,}".format(lvl), inline=False)
             embed.add_field(name="Total Experience:", value="{:,}".format(exp), inline=False)
             embed.add_field(name="XP To Next Level:",
-                            value="{:,}".format(5 * (lvl ** 2) + (50 * lvl) + 100 - exp), inline=False)
+                            value=xp_needed, inline=False)
             embed.set_footer(text="Have a nice day!", icon_url=ctx.guild.icon.url)
             await ctx.respond(embed=embed)
 
