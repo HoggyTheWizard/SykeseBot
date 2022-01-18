@@ -1,15 +1,20 @@
+import config
+
 verified_role_id = 893933214656233563
 unverified_role_id = 893933243768918016
 mod_id = 891123241765179472
 
-guilds = [
-    889697074491293736,  # Sykese
-    707963219536248982  # test server
-    ]
-
-test_guilds = [
-    707963219536248982  # test server
-]
+main_guilds = [
+        889697074491293736,  # Sykese
+        707963219536248982  # test server
+        ]
+test_guilds = guilds = [
+        707963219536248982  # test server
+        ]
+if config.host == "master":
+    guilds = main_guilds
+else:
+    guilds = test_guilds
 
 group_tiers = {
     889717866239234088: 0,  # friend (everyone)
