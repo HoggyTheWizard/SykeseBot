@@ -42,9 +42,8 @@ class LevelingMain(commands.CommandError):
                     channel = message.channel
 
                 # removing all roles that a user has that don't correspond with their level
-                role_ids = [role.id for role in member.roles]
-                levelup_roles = [levelup_actions[x] for x in levelup_actions]
-                same_roles = [x for x in role_ids if x in levelup_roles]
+                same_roles = [x for x in [role.id for role in member.roles]
+                              if x in [levelup_actions[x] for x in levelup_actions]]
                 for role in same_roles:
                     await member.remove_roles(await guild.get_role(role))
                 await member.add_roles(role)
