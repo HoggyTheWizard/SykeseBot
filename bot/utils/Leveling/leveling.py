@@ -27,7 +27,7 @@ class LevelingMain(commands.CommandError):
                 return users.find_one({"id": collection["id"]})["Leveling"]
 
     @staticmethod
-    async def levelup(self, message, collection, leveling, users):
+    async def levelup(guild, users, collection, leveling, member, message=None):
         exp = leveling.get("exp", 0)
         lvl = leveling.get("level", 0)
         # Taken from mee6 (the only good thing they've ever done)
@@ -35,7 +35,11 @@ class LevelingMain(commands.CommandError):
         if exp >= levelup_xp_needed:
             users.update_one({"id": collection["id"]}, {"$set": {"Leveling.level": lvl + 1}})
             if str(lvl) in levelup_actions:
-                role = await message.guild.get_role(levelup_actions[str(lvl)])
-                await message.author.add_roles(role)
-                await message.channel.send(f"Congrats <@{message.author.id}>, you're now level **{lvl}** and "
-                                           f"have received the {role.name} role!")
+                role = await guild.get_role(levelup_actions[str(lvl)])
+                if message is None:
+                    channel = await guild.get_channel(889697074491293740)
+                else:
+                    channel = message.channel
+                await member.add_roles(role)
+                await channel.send(f"Congrats <@{message.author.id}>, you're now level **{lvl}** and "
+                                   f"have received the {role.name} role!")
