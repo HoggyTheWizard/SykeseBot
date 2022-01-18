@@ -9,12 +9,12 @@ import time
 import discord
 import config
 
-
 users = main_db["users"]
 blacklisted_channels = [
                 893934059804319775,  # verification
                 893936274291974164  # bots
             ]
+
 
 class leveling_main(commands.Cog):
     def __init__(self, bot):
@@ -56,16 +56,17 @@ class leveling_main(commands.Cog):
             if vc.id in blacklisted_channels:
                 continue
             else:
+                states = vc.voice_states
                 for member in vc.members:
-                    if member.voice_state in [discord.VoiceState.self_deaf, discord.VoiceState.self_mute]:
+                    if states[member.id].self_mute or states[member.id].self_deaf:
                         continue
 
                     collection = users.find_one({"id": member.id})
                     if collection is not None:
                         leveling_object = leveling.get_leveling(collection, users)
                         current_exp = leveling_object.get("exp", 0)
-                        added_exp = random.randint(15, 20)
-                        users.update_one({"id": guild.id}, {"$set":
+                        added_exp = random.randint(2, 6)
+                        users.update_one({"id": member.id}, {"$set":
                                          {"Leveling.exp": current_exp + added_exp}})
                         await leveling.levelup(guild, users, collection, leveling_object, member)
 
@@ -98,7 +99,8 @@ class leveling_main(commands.Cog):
                 xp_needed = "{:,}".format(calculated_needed_xp)
 
             embed = discord.Embed(title=f"{str(user)}'s Level",
-                                  description="Levels can be increased by chatting in the server.",
+                                  description="Levels can be increased by chatting in the server or talking in a voice "
+                                              "channel.",
                                   color=ctx.author.color)
             embed.add_field(name="Level:", value="{:,}".format(lvl), inline=False)
             embed.add_field(name="Total Experience:", value="{:,}".format(exp), inline=False)
@@ -149,6 +151,7 @@ class leveling_main(commands.Cog):
     async def before_printer(self):
         print("Prepping vc leveling task...")
         await self.bot.wait_until_ready()
+
 
 def setup(bot):
     bot.add_cog(leveling_main(bot))
