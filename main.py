@@ -1,4 +1,3 @@
-from discord import ActivityType, AllowedMentions
 from BotLoader import BotLoader
 from discord.ext import commands
 from config import database_user, database_password, main_db_name
@@ -6,7 +5,7 @@ import logging
 import discord
 import config
 import pymongo
-import ssl
+
 cluster = pymongo.MongoClient(f"mongodb+srv://{database_user}:{database_password}@cluster0.2uexc.mongodb.net/"
                               f"{main_db_name}?retryWrites=true&w=majority")
 main_db = cluster["main_data"]
