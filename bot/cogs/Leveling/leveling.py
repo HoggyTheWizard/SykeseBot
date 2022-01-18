@@ -91,11 +91,16 @@ class leveling_main(commands.Cog):
         embed = discord.Embed(title="Level Leaderboard",
                               description="A leaderboard displaying the top exp earners in our server.",
                               color=ctx.author.color)
+        id_list = []
+        for member in ctx.guild.members:
+            id_list.append(member.id)
 
         lb = users.find({}).sort("Leveling.exp", -1)
         i = 0
         for user in lb:
             if "Leveling" not in user:
+                continue
+            elif user["id"] not in id_list:
                 continue
             else:
                 i += 1
