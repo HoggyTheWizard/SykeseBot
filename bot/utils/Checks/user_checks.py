@@ -39,6 +39,14 @@ def check_perms(author: discord.Member, required_permissions: list, override=Non
                     return False
             return True
 
+def embed_perm(author: discord.Member):
+    if not len(author.roles):
+        return False
+    else:
+        for role in author.roles:
+            if role.permissions.embed_links:
+                return True
+        return False
 
 def perms(required_permissions: list):
     async def predicate(ctx):
