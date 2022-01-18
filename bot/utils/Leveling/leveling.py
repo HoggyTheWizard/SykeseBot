@@ -34,13 +34,9 @@ class LevelingMain(commands.CommandError):
         # Taken from mee6 (the only good thing they've ever done)
         levelup_xp_needed = 5 * (lvl ** 2) + (50 * lvl) + 100
         if exp >= levelup_xp_needed:
-            print("triggered levelup")
             users.update_one({"id": collection["id"]}, {"$set": {"Leveling.level": lvl + 1}})
-            print(str(lvl+1))
             if str(lvl+1) in levelup_actions:
-                print("triggered levelup action")
                 role = guild.get_role(levelup_actions[str(lvl+1)])
-                print(role)
 
                 if message is None:
                     channel = guild.get_channel(774054508329566209)
