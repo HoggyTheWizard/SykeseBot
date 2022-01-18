@@ -2,7 +2,7 @@ from discord.commands import slash_command as slash
 from bot.utils.Leveling.leveling import LevelingMain as leveling
 from bot.utils.Checks.user_checks import is_verified
 from variables import guilds
-from discord.ext import commands
+from discord.ext import commands, tasks
 from main import main_db
 import random
 import time
@@ -11,15 +11,19 @@ import config
 
 
 users = main_db["users"]
-
+blacklisted_channels = [
+                893934059804319775,  # verification
+                893936274291974164  # bots
+            ]
 
 class leveling_main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.vc_exp.start()
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if config.host == "master":
+        if config.host != "master":
             return
         elif not message.guild or message.guild.id not in [889697074491293736]:
             return
@@ -28,11 +32,6 @@ class leveling_main(commands.Cog):
         elif message.type == discord.MessageType.application_command:
             return
         else:
-            blacklisted_channels = [
-                893934059804319775,  # verification
-                893936274291974164,  # bots
-
-            ]
             collection = users.find_one({"id": message.author.id})
 
             if collection is not None and message.channel.id not in blacklisted_channels:
@@ -46,7 +45,29 @@ class leveling_main(commands.Cog):
                     users.update_one({"id": message.author.id}, {"$set":
                                      {"Leveling.exp": current_exp + added_exp,
                                       "Leveling.lastTriggeredMessage": int(time.time())}})
-                    await leveling.levelup(self, message, collection, leveling_object, users)
+                    await leveling.levelup(message.guild, users, collection, leveling_object, message.author, message)
+
+    @tasks.loop(seconds=90)
+    async def vc_exp(self):
+        if config.host != "master":
+            return
+        guild = self.bot.get_guild(guilds[0])
+        for vc in guild.voice_channels:
+            if vc.id in blacklisted_channels:
+                continue
+            else:
+                for member in vc.members:
+                    if member.voice_state in [discord.VoiceState.self_deaf, discord.VoiceState.self_mute]:
+                        continue
+
+                    collection = users.find_one({"id": member.id})
+                    if collection is not None:
+                        leveling_object = leveling.get_leveling(collection, users)
+                        current_exp = leveling_object.get("exp", 0)
+                        added_exp = random.randint(15, 20)
+                        users.update_one({"id": guild.id}, {"$set":
+                                         {"Leveling.exp": current_exp + added_exp}})
+                        await leveling.levelup(guild, users, collection, leveling_object, member)
 
     @slash(guild_ids=guilds)
     @is_verified()
@@ -124,6 +145,10 @@ class leveling_main(commands.Cog):
         embed.set_footer(text=footer, icon_url=ctx.author.avatar.url)
         await ctx.respond(embed=embed)
 
+    @vc_exp.before_loop
+    async def before_printer(self):
+        print("Prepping vc leveling task...")
+        await self.bot.wait_until_ready()
 
 def setup(bot):
     bot.add_cog(leveling_main(bot))
