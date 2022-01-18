@@ -6,10 +6,11 @@ emoji_id = 678312701205807105
 
 # add role ids
 levelup_actions = {
-    "10": 0, "25": 0, "50": 0,
-    "75": 0, "100": 0, "125": 0,
-    "150": 0, "175": 0, "200": 0,
+    "10": 933130048192544838, "25": 933130059731066930, "50": 933130064927784970,
+    "75": 933130067284992050, "100": 933130061949849691, "125": 933130057063481384,
+    "150": 933130054437859428, "175": 933130051522809936, "200": 933130038356877373,
 }
+
 
 class LevelingMain(commands.CommandError):
     pass
@@ -33,11 +34,16 @@ class LevelingMain(commands.CommandError):
         # Taken from mee6 (the only good thing they've ever done)
         levelup_xp_needed = 5 * (lvl ** 2) + (50 * lvl) + 100
         if exp >= levelup_xp_needed:
+            print("triggered levelup")
             users.update_one({"id": collection["id"]}, {"$set": {"Leveling.level": lvl + 1}})
-            if str(lvl) in levelup_actions:
-                role = await guild.get_role(levelup_actions[str(lvl)])
+            print(str(lvl+1))
+            if str(lvl+1) in levelup_actions:
+                print("triggered levelup action")
+                role = guild.get_role(levelup_actions[str(lvl+1)])
+                print(role)
+
                 if message is None:
-                    channel = await guild.get_channel(889697074491293740)
+                    channel = guild.get_channel(774054508329566209)
                 else:
                     channel = message.channel
 
@@ -45,7 +51,8 @@ class LevelingMain(commands.CommandError):
                 same_roles = [x for x in [role.id for role in member.roles]
                               if x in [levelup_actions[x] for x in levelup_actions]]
                 for role in same_roles:
-                    await member.remove_roles(await guild.get_role(role))
+                    await member.remove_roles(guild.get_role(role))
+
                 await member.add_roles(role)
-                await channel.send(f"Congrats <@{message.author.id}>, you're now level **{lvl}** and "
-                                   f"have received the {role.name} role!")
+                await channel.send(f"Congrats <@{member.id}>, you're now level **{lvl}** and "
+                                   f"have received the **{role.name}** role!")
