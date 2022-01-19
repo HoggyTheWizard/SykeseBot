@@ -15,7 +15,7 @@ class auto_moderation(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.type == discord.MessageType.application_command or message is None:
+        if message.type == discord.MessageType.application_command or message.guild is None:
             return
         elif message.guild.id == 889697074491293736 and host == "master":
             if any(x in message.content for x in gif_domains):
