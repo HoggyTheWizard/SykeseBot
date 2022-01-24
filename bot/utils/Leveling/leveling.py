@@ -49,6 +49,6 @@ class LevelingMain(commands.CommandError):
                 for role in same_roles:
                     await member.remove_roles(guild.get_role(role))
 
-                await member.add_roles(role)
+                await member.add_roles(guild.get_role(role))
                 await channel.send(f"Congrats <@{member.id}>, you're now level **{lvl}** and "
                                    f"have received the **{role.name}** role!")
