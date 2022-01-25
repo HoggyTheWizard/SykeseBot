@@ -16,7 +16,7 @@ class flags(commands.Cog):
             return
         elif message.author.bot:
             return
-        elif message.guild.id not in [889697074491293736, 707963219536248982]:
+        elif message.guild is None or message.guild.id not in [889697074491293736, 707963219536248982]:
             return
         elif any(flagged in message.content.lower().split() for flagged in flagged_words):
             my_word = ""
