@@ -36,8 +36,7 @@ class LevelingMain(commands.CommandError):
         if exp >= levelup_xp_needed:
             users.update_one({"id": collection["id"]}, {"$set": {"Leveling.level": lvl + 1}})
             if str(lvl+1) in levelup_actions:
-                role = guild.get_role(levelup_actions[str(lvl+1)])
-
+                added_role = guild.get_role(levelup_actions[str(lvl+1)])
                 if message is None:
                     channel = guild.get_channel(774054508329566209)
                 else:
@@ -48,7 +47,6 @@ class LevelingMain(commands.CommandError):
                               if x in [levelup_actions[x] for x in levelup_actions]]
                 for role in same_roles:
                     await member.remove_roles(guild.get_role(role))
-
-                await member.add_roles(guild.get_role(role))
-                await channel.send(f"Congrats <@{member.id}>, you're now level **{lvl}** and "
-                                   f"have received the **{role.name}** role!")
+                await member.add_roles(added_role)
+                await channel.send(f"Congrats <@{member.id}>, you're now level **{lvl+1}** and "
+                                   f"have received the **{added_role.name}** role!")
