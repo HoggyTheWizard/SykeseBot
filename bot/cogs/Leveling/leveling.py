@@ -4,10 +4,12 @@ from bot.utils.Checks.user_checks import is_verified
 from variables import guilds
 from discord.ext import commands, tasks
 from main import main_db
+from datetime import datetime
 import random
 import time
 import discord
 import config
+import pytz
 
 users = main_db["users"]
 blacklisted_channels = [
@@ -40,7 +42,8 @@ class leveling_main(commands.Cog):
                 last_triggered_message = leveling_object.get("lastTriggeredMessage", None)
 
                 # 90 represents the cooldown
-                if last_triggered_message is None or last_triggered_message + 90 < int(time.time()):
+                if last_triggered_message is None or last_triggered_message + 90 < int(time.time()) or \
+                        leveling_object.get("expBlacklist", False) is False:
                     added_exp = random.randint(15, 20)
                     users.update_one({"id": message.author.id}, {"$set":
                                      {"Leveling.exp": current_exp + added_exp,
@@ -51,6 +54,11 @@ class leveling_main(commands.Cog):
     async def vc_exp(self):
         if config.host != "master":
             return
+
+        if datetime.now(pytz.timezone("US/Eastern")).strftime('%H:%M') == "01:00":
+            for user in users.find({"Leveling.dailyVCExp": {"$exists": True}}):
+                users.update_one({"id": user["id"]}, {"$set": {"Leveling.dailyVCExp": 0}})
+
         guild = self.bot.get_guild(guilds[0])
         for vc in guild.voice_channels:
             if vc.id in blacklisted_channels:
@@ -58,16 +66,21 @@ class leveling_main(commands.Cog):
             else:
                 states = vc.voice_states
                 for member in vc.members:
+
                     if states[member.id].self_mute or states[member.id].self_deaf:
                         continue
 
                     collection = users.find_one({"id": member.id})
                     if collection is not None:
                         leveling_object = leveling.get_leveling(collection, users)
+                        if leveling_object.get("dailyVCExp", 0) >= 150 or \
+                                leveling_object.get("expBlacklist", False) is True:
+                            continue
                         current_exp = leveling_object.get("exp", 0)
                         added_exp = random.randint(2, 6)
                         users.update_one({"id": member.id}, {"$set":
-                                         {"Leveling.exp": current_exp + added_exp}})
+                                         {"Leveling.exp": current_exp + added_exp, "Leveling.dailyVCExp":
+                                             leveling_object.get("dailyVCExp", 0) + added_exp}})
                         await leveling.levelup(guild, users, collection, leveling_object, member)
 
     @slash(guild_ids=guilds)
