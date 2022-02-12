@@ -38,7 +38,7 @@ class LevelingMain(commands.CommandError):
             if str(lvl+1) in levelup_actions:
                 added_role = guild.get_role(levelup_actions[str(lvl+1)])
                 if message is None:
-                    channel = guild.get_channel(774054508329566209)
+                    channel = guild.get_channel(889697074491293740)
                 else:
                     channel = message.channel
 
