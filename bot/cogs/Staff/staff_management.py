@@ -11,13 +11,22 @@ class staff_management(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    #@perms(["staff.admin"])
+    @perms(["staff.admin"])
+    async def dm(self, ctx, member: discord.Member, *, message: str):
+        try:
+            await member.send(message)
+        except discord.Forbidden:
+            await ctx.send("Could not send message to member.")
+
+    @commands.command()
+    @perms(["staff.admin"])
     async def send(self, ctx, channel: discord.TextChannel, *, message: str):
         await channel.send(message)
 
         await ctx.send("Successfully sent message.")
+
     @commands.command(hidden=True)
-    #@perms(["staff.admin"])
+    @perms(["staff.admin"])
     async def set_perm(self, ctx, role: discord.Role, name: str):
         with open(f"{pathlib.Path().resolve()}/bot/utils/Permissions/{str(role.id)}.json", "r+") as file:
             new_json = {
