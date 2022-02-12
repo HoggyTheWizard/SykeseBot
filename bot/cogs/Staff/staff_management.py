@@ -15,6 +15,7 @@ class staff_management(commands.Cog):
     async def dm(self, ctx, member: discord.Member, *, message: str):
         try:
             await member.send(message)
+            await ctx.send("Successfully sent message.")
         except discord.Forbidden:
             await ctx.send("Could not send message to member.")
 
