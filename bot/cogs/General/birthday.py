@@ -1,12 +1,11 @@
 from discord.commands import slash_command as slash, Option
 from discord.ext import commands, tasks
-from bot.utils.Checks.user_checks import is_verified
+from bot.utils.Checks.user import is_verified
 from bot.utils.Checks.channel_checks import channel_restricted
-from variables import guilds
+from bot.variables import guilds
 import datetime
 from db import main_db
 from config import host
-import discord
 import asyncio
 import pytz
 

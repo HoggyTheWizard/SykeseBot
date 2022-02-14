@@ -1,6 +1,6 @@
-from bot.utils.Checks.user_checks import check_perms
+from bot.utils.Checks.user import staff_check
 from discord.ext import commands
-from variables import test_guilds
+from bot.variables import test_guilds, moderator_ids
 
 whitelisted_channel_ids = [893934059804319775, 893936274291974164, 889697149279956993, 892116017977905242]
 
@@ -14,7 +14,7 @@ def channel_restricted():
         if ctx.guild.id in test_guilds:
             return True
         if ctx.channel.id not in whitelisted_channel_ids:
-            if check_perms(ctx.author, ["bypass.channelRestrictions"]) is False:
+            if staff_check(ctx.author, moderator_ids) is False:
                 error = "You cannot use this command in this channel!"
                 try:
                     await ctx.respond(error, ephemeral=True)

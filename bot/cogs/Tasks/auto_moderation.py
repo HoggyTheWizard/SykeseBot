@@ -1,7 +1,8 @@
 from discord.ext import commands
-from bot.utils.Checks.user_checks import check_perms, embed_perm
-from main import main_db
+from bot.utils.Checks.user import staff_check, embed_perm
+from db import main_db
 from config import host
+import bot.variables as v
 import discord
 
 users = main_db["users"]
@@ -22,10 +23,11 @@ class auto_moderation(commands.Cog):
                 if embed_perm(message.author) is False:
                     await message.delete()
             if any(x in message.content for x in blacklisted_domains):
-                if check_perms(message.author, ["bypass.blacklistedDomains"]) is True:
+                if staff_check(message.author, v.moderator_ids) is True:
                     return
                 else:
                     await message.delete()
+
 
 def setup(bot):
     bot.add_cog(auto_moderation(bot))

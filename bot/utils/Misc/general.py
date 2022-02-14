@@ -1,25 +1,10 @@
 from config import hypixel_api_key
 from discord.ext import commands
-from variables import group_tiers
 import aiohttp
 
 
 class general(commands.CommandError):
     pass
-
-
-def get_highest_group(member):
-    if not len(member.roles):
-        return None
-    else:
-        highest_role_permission = 0
-        highest_role_id = None
-        for role in member.roles:
-            if group_tiers.get(role.id, None) is not None:
-                if group_tiers[role.id] > highest_role_permission:
-                    highest_role_permission = group_tiers[role.id]
-                    highest_role_id = group_tiers[role.id]
-        return [highest_role_id, highest_role_permission]
 
 
 async def aiohttp_json(endpoint, attribute):

@@ -1,10 +1,10 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash, Option
-from variables import guilds
+from bot.variables import guilds, moderator_ids
 from bot.utils.Misc.general import get_mojang_from_uuid
 from bot.utils.Checks.channel_checks import channel_restricted
 from bot.utils.Misc.cooldown import cooldown
-from bot.utils.Checks.user_checks import is_verified, check_perms
+from bot.utils.Checks.user import is_verified, staff_check
 from db import main_db
 import discord
 
@@ -36,7 +36,7 @@ class general(commands.Cog):
         collection = users.find_one({"id": user.id})
 
         if account_type == "other" and collection.get("publicProfile", True) is False and \
-                check_perms(ctx.author, ["staff.viewPrivateProfile"]) is False:
+                staff_check(ctx.author, moderator_ids) is False:
 
             await ctx.respond("This user has indicated that they do not want their linked account to be public. "
                               "As such, this information is only available to server staff.")

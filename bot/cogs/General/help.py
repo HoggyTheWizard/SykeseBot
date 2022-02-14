@@ -2,7 +2,7 @@ from discord.ext import commands
 from discord.commands import slash_command as slash
 from bot.utils.Misc.cooldown import cooldown
 from bot.utils.Checks.channel_checks import channel_restricted
-from variables import guilds
+from bot.variables import guilds
 import discord
 
 

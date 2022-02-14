@@ -1,4 +1,4 @@
-from variables import mod_id
+from bot.variables import mod_id
 from discord.ext import commands
 import time
 import discord
