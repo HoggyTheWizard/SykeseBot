@@ -5,7 +5,7 @@ from bot.utils.Misc.general import get_mojang_from_uuid
 from bot.utils.Checks.channel_checks import channel_restricted
 from bot.utils.Misc.cooldown import cooldown
 from bot.utils.Checks.user_checks import is_verified, check_perms
-from main import main_db
+from db import main_db
 import discord
 
 users = main_db["users"]

@@ -1,7 +1,7 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash
 from variables import guilds
-from main import main_db
+from db import main_db
 from bot.utils.Misc.general import aiohttp_json, get_mojang_from_username
 from bot.utils.Checks.channel_checks import channel_restricted
 from bot.utils.Checks.user_checks import perms

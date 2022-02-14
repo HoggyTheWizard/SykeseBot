@@ -11,7 +11,7 @@ class staff_management(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @perms(["staff.admin"])
+    @commands.has_any_role(891123241765179472)
     async def dm(self, ctx, member: discord.Member, *, message: str):
         try:
             await member.send(message)
@@ -20,7 +20,7 @@ class staff_management(commands.Cog):
             await ctx.send("Could not send message to member.")
 
     @commands.command()
-    @perms(["staff.admin"])
+    @commands.has_any_role(891123241765179472)
     async def send(self, ctx, channel: discord.TextChannel, *, message: str):
         await channel.send(message)
 

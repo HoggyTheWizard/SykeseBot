@@ -3,7 +3,7 @@ from bot.utils.Leveling.leveling import LevelingMain as leveling
 from bot.utils.Checks.user_checks import is_verified
 from variables import guilds
 from discord.ext import commands, tasks
-from main import main_db
+from db import main_db
 from datetime import datetime
 import random
 import time
@@ -96,7 +96,7 @@ class leveling_main(commands.Cog):
 
         collection = users.find_one({"id": user.id})
 
-        if "Leveling" not in collection:
+        if collection is None or "Leveling" not in collection:
             if user_type == "other":
                 await ctx.respond(f"Could not find any leveling data for {str(user)}")
             elif user_type == "self":

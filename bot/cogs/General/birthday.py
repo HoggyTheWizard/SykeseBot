@@ -4,7 +4,7 @@ from bot.utils.Checks.user_checks import is_verified
 from bot.utils.Checks.channel_checks import channel_restricted
 from variables import guilds
 import datetime
-from main import main_db
+from db import main_db
 from config import host
 import discord
 import asyncio
