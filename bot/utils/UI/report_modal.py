@@ -76,4 +76,3 @@ class ReportModal(Modal):
                                 "status": "ACTIVE"})
 
             await interaction.response.send_message("Report submitted!", delete_after=5)
-
