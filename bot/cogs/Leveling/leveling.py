@@ -21,7 +21,7 @@ blacklisted_channels = [
 class leveling_main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.vc_exp.start()
+        # self.vc_exp.start()
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -119,13 +119,15 @@ class leveling_main(commands.Cog):
             embed.add_field(name="Total Experience:", value="{:,}".format(exp), inline=False)
             embed.add_field(name="XP To Next Level:",
                             value=xp_needed, inline=False)
-            embed.set_footer(text="Have a nice day!", icon_url=ctx.guild.icon.url)
+            embed.set_footer(text="The way levels are calculated has been changed - you did not lose exp.",
+                             icon_url=ctx.guild.icon.url)
             await ctx.respond(embed=embed)
 
     @slash(guild_ids=guilds, description="A leaderboard displaying the top exp earners in our server.")
     async def level_leaderboard(self, ctx):
         embed = discord.Embed(title="Level Leaderboard",
-                              description="A leaderboard displaying the top exp earners in our server.",
+                              description="A leaderboard displaying the top exp earners in our server. "
+                                          "The way levels are calculated has been changed - you did not lose exp.",
                               color=ctx.author.color)
         id_list = []
         for member in ctx.guild.members:
