@@ -4,7 +4,7 @@ from discord.ext import commands
 import discord
 
 users = main_db["users"]
-
+reports = main_db["reports"]
 
 class ReportHandler(commands.CommandError):
     pass
@@ -33,23 +33,47 @@ class ReportModal(Modal):
         )
 
     async def callback(self, interaction: discord.Interaction):
+        print("triggered callback")
+        await interaction.response.defer()
         user = users.find_one({"id": self.ctx.author.id})
         if self.ctx.author.id == self.member.id:
             raise ReportHandler("You can't report yourself.")
 
         elif 891123241765179472 in [role.id for role in self.ctx.author.roles]:
-            raise ReportHandler("You can't report a staff member.")
+            await interaction.response.send_message("You can't report a staff member.")
+            return
 
-        elif user is None or user.get("activeReports", 0) >= 3:
-            raise ReportHandler("You can't have more than 3 active reports open at once. Please be patient.")
+        elif user is None or user.get("Reports", {"activeReports", 0}).get("activeReports") >= 3:
+            await interaction.response.send_message("You can't have more than 3 active reports open at once. "
+            "Please be patient as your pending reports are reviewed by a moderator.")
+            return
 
         else:
 
-            embed = discord.Embed(title="New Report", color=discord.Color.red())
+            embed = discord.Embed(title=f"New Report | #{reports.count_documents({}) + 1}", color=discord.Color.red())
             embed.add_field(name="Submitted By:", value=f"{interaction.user.mention}")
             embed.add_field(name="Reported User:", value=self.member.mention)
             embed.add_field(name="Report Tile:", value=self.children[0].value, inline=False)
             embed.add_field(name="Report Details", value=self.children[1].value or "No Details Provided.", inline=False)
-            await self.ctx.guild.get_channel(942152380600950824).send(embed=embed)
-            await self.ctx.respond("Report submitted!", delete_after=3)
+            log = await self.ctx.guild.get_channel(942152380600950824).send(embed=embed)
+
+            report_data = user.get("Reports", {})
+            report_data["activeReports"] = report_data.get("activeReports", 0)
+            report_data["reports"] = report_data.get("reports", 0)
+            users.update_one({"id": self.ctx.author.id}, {"$set": {
+                "Reports.activeReports": report_data["activeReports"] + 1,
+                "Reports.reports": report_data["reports"] + 1}})
+
+            member_collection = users.find_one({"id": self.member.id})
+            if member_collection is not None:
+                member_report_data = member_collection.get("Reports", {"totalTimesReported": 0})
+                users.update_one({"id": self.member.id}, {"$set": {
+                    "Reports.totalTimesReported": member_report_data.get("totalTimesReported", 0) + 1}})
+
+            reports.insert_one({"id": reports.count_documents({}) + 1, "messageID": log.id,
+                                "reporter": self.ctx.author.id, "offender": self.member.id,
+                                "title": self.children[0].value, "details": self.children[1].value or None,
+                                "status": "ACTIVE"})
+
+            await interaction.response.send_message("Report submitted!", delete_after=5)
 
