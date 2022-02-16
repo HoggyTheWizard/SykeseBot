@@ -19,26 +19,24 @@ class BotLoader(commands.Bot):
     async def on_ready(self):
         log.info(f"Ready: {self.user} (ID: {self.user.id})")
 
-    async def on_command_error(self, ctx: commands.Context, exc):
+    async def on_command_error(self, ctx, exc):
         if isinstance(exc, commands.CommandNotFound):
             return
-
         elif isinstance(exc, commands.MissingRequiredArgument):
             await ctx.send(f"Invalid Command Format: {ctx.prefix}{ctx.command.qualified_name} {ctx.command.signature}")
             return
-
-        elif isinstance(exc, commands.errors.CheckFailure):
-            return
-        log.error("", exc_info=exc)
-
-        await ctx.send(exc)
-
-    async def on_application_command_error(self, ctx, error):
-        if isinstance(error, core.CheckFailure):
+        elif isinstance(exc, commands.MissingPermissions):
+            await ctx.send("You do not have permission to use this command.")
             return
         else:
+            await ctx.send(exc)
+
+    async def on_application_command_error(self, ctx, exc):
+        if isinstance(exc, core.CheckFailure):
+            pass
+        else:
             try:
-                await ctx.respond(error)
+                await ctx.respond(exc)
             except:
-                await ctx.send(error)
-            log.error("", exc_info=error)
+                await ctx.send(exc)
+            log.error("", exc_info=exc)
