@@ -35,10 +35,10 @@ class Report(commands.Cog):
                      ):
         report = reports.find_one({"id": report_id})
         if report_id is None or report is None:
-            await ctx.respond("That report doesn't exist.")
+            await ctx.respond("That report doesn't exist.", delete_after=5)
 
         elif report.get("status", "ACTIVE") != "ACTIVE":
-            await ctx.respond("This report has already been handled.")
+            await ctx.respond("This report has already been handled.", delete_after=5)
 
         else:
             reporter = users.find_one({"id": report["reporter"]})
@@ -78,9 +78,13 @@ class Report(commands.Cog):
             except:
                 pass
 
-            msg = await ctx.guild.get_channel(942152380600950824).fetch_message(report["messageID"])
-            await msg.delete()
-            await ctx.respond(f"Handled report #{report_id}")
+            try:
+                msg = await ctx.guild.get_channel(942853283662397440).fetch_message(report["messageID"])
+                await msg.delete()
+            except:
+                pass
+
+                await ctx.respond(f"Handled report #{report_id}", delete_after=5)
 
 
 def setup(bot):

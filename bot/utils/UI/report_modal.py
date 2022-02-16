@@ -38,15 +38,16 @@ class ReportModal(Modal):
         await interaction.response.defer()
         user = users.find_one({"id": self.ctx.author.id})
         if self.ctx.author.id == self.member.id:
-            raise ReportHandler("You can't report yourself.")
+            await interaction.response.send_message("You can't report yourself.", delete_after=3)
+            return
 
         elif 891123241765179472 in [role.id for role in self.member.roles]:
-            await interaction.response.send_message("You can't report a staff member.")
+            await interaction.response.send_message("You can't report a staff member.", delete_after=3)
             return
 
         elif user is None or user.get("Reports", None) is None or user["Reports"].get("activeReports", 0) >= 3:
             await interaction.response.send_message("You can't have more than 3 active reports open at once. "
-            "Please be patient as your pending reports are reviewed by a moderator.")
+            "Please be patient as your pending reports are reviewed by a moderator.", delete_after=5)
             return
 
         else:
