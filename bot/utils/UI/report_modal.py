@@ -40,11 +40,11 @@ class ReportModal(Modal):
         if self.ctx.author.id == self.member.id:
             raise ReportHandler("You can't report yourself.")
 
-        elif 891123241765179472 in [role.id for role in self.ctx.author.roles]:
+        elif 891123241765179472 in [role.id for role in self.member.roles]:
             await interaction.response.send_message("You can't report a staff member.")
             return
 
-        elif user is None or user.get("Reports", {"activeReports", 0}).get("activeReports") >= 69:
+        elif user is None or user.get("Reports", None) is None or user["Reports"].get("activeReports", 0) >= 3:
             await interaction.response.send_message("You can't have more than 3 active reports open at once. "
             "Please be patient as your pending reports are reviewed by a moderator.")
             return
