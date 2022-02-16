@@ -18,7 +18,7 @@ class Report(commands.Cog):
     report = SlashCommandGroup("report", "Report a user to the moderators.", guild_ids=v.guilds)
 
     @user_command(name="Report", guild_ids=v.guilds)
-    async def report_user(self, ctx, member):
+    async def report_user(self, ctx, member: Option(discord.Member, "The member you want to report")):
         modal = ReportModal(title=f"Report Against {str(member)}", ctx=ctx, member=member)
         await ctx.interaction.response.send_modal(modal)
 
@@ -48,17 +48,19 @@ class Report(commands.Cog):
             })
 
             if status == "Accepted":
-                data["totalDeniedReports"] = None
-                data["totalAcceptedReports"] = data.get("Reports",
-                                                        {"totalAcceptedReports", 0}).get("totalAcceptedReports") + 1
+                users.update_one({"id": reporter["id"]}, {"$set": {
+                    "Reports.totalAcceptedReports": reporter.get(
+                        "Reports", {"totalAcceptedReports": 0}).get("totalAcceptedReports", 0) + 1}})
 
                 user_message = (f"[REPORT] After reviewing your report (ID: {report_id}), it has been determined that "
                                 f"the user you reported did act in a manner that breaks our community guidelines. "
                                 "Thank you for your report!")
 
             elif status == "Denied":
-                data["totalAcceptedReports"] = None
-                data["totalDeniedReports"] = data.get("Reports", {"totalDeniedReports": 0}).get("totalDeniedReports") + 1
+                users.update_one({"id": reporter["id"]}, {"$set": {
+                    "Reports.totalDeniedReports": reporter.get(
+                        "Reports", {"totalDeniedReports": 0}).get("totalDeniedReports", 0) + 1}})
+
                 user_message = (f"[REPORT] After reviewing your report (ID: {report_id}), it has been determined that "
                                 "your report either doesn't feature content breaking our rules or doesn't include "
                                 "enough evidence to justify issuing a punishment. If you believe this is false or have " 
@@ -68,11 +70,7 @@ class Report(commands.Cog):
             else:
                 return
 
-            users.update_one({"id": report["reporter"]}, {"$set": {
-                "Reports.activeReports": data["activeReports"],
-                "Reports.totalAcceptedReports": data["totalAcceptedReports"],
-
-            }})
+            users.update_one({"id": report["reporter"]}, {"$set": {"Reports.activeReports": data["activeReports"]}})
             reports.update_one({"id": int(report_id)}, {"$set": {"status": status, "reason": reason,
                                                                  "handledBy": ctx.author.id}})
             try:
@@ -80,7 +78,10 @@ class Report(commands.Cog):
             except:
                 pass
 
+            msg = await ctx.guild.get_channel(942152380600950824).fetch_message(report["messageID"])
+            await msg.delete()
             await ctx.respond(f"Handled report #{report_id}")
+
 
 def setup(bot):
     bot.add_cog(Report(bot))

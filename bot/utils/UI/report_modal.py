@@ -6,6 +6,7 @@ import discord
 users = main_db["users"]
 reports = main_db["reports"]
 
+
 class ReportHandler(commands.CommandError):
     pass
 
@@ -43,7 +44,7 @@ class ReportModal(Modal):
             await interaction.response.send_message("You can't report a staff member.")
             return
 
-        elif user is None or user.get("Reports", {"activeReports", 0}).get("activeReports") >= 3:
+        elif user is None or user.get("Reports", {"activeReports", 0}).get("activeReports") >= 69:
             await interaction.response.send_message("You can't have more than 3 active reports open at once. "
             "Please be patient as your pending reports are reviewed by a moderator.")
             return
@@ -55,7 +56,7 @@ class ReportModal(Modal):
             embed.add_field(name="Reported User:", value=self.member.mention)
             embed.add_field(name="Report Tile:", value=self.children[0].value, inline=False)
             embed.add_field(name="Report Details", value=self.children[1].value or "No Details Provided.", inline=False)
-            log = await self.ctx.guild.get_channel(942152380600950824).send(embed=embed)
+            log = await self.ctx.guild.get_channel(942853283662397440).send(embed=embed)
 
             report_data = user.get("Reports", {})
             report_data["activeReports"] = report_data.get("activeReports", 0)
