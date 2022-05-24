@@ -3,6 +3,7 @@ from bot.utils.Misc.requests import mojang
 from db import main_db
 import bot.variables as v
 import discord
+import aiohttp
 import config
 
 users = main_db["users"]
@@ -20,6 +21,7 @@ class NameSync(commands.Cog):
 
         guild = self.bot.get_guild(v.guilds[0])
         channel = guild.get_channel(v.bot_logs)
+        session = aiohttp.ClientSession()
         success = 0
         exempt = 0
         no_change = 0
@@ -31,13 +33,13 @@ class NameSync(commands.Cog):
                 continue
 
             doc = users.find_one({"id": member.id})
-            request = await mojang(doc.get("uuid", None))
+            request = await mojang(session=session, uuid_or_name=doc.get("uuid", None))
 
-            if doc is None or request is None:
+            if not doc or not request:
                 no_change += 1
                 continue
 
-            elif member.nick is None and request["name"] != member.name or member.nick != request["name"]:
+            elif not member.nick and request["name"] != member.name or member.nick != request["name"]:
                 try:
                     await member.edit(nick=request["name"])
                     success += 1
