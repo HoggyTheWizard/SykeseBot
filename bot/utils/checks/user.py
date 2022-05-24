@@ -6,6 +6,7 @@ import discord
 
 users = main_db["users"]
 alts = main_db["alts"]
+# These functions are a fallback for if Discord's permission systems fail (they have before, and they will again)
 
 
 class UserChecks(core.ApplicationCommandError):
@@ -16,11 +17,10 @@ def throw(x):
     raise x
 
 
-def is_verified():
+def verified():
     async def predicate(ctx):
-        user = users.find_one({"id": ctx.author.id})
 
-        return (user is not None and user.get("isAlt", False) is False) \
+        return (len([role.id for role in ctx.author.roles if role.id == v.verified_role_id])) \
             or throw(UserChecks("You must be verified to use this command."))
 
     return commands.check(predicate)
