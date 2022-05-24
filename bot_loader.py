@@ -39,4 +39,3 @@ class BotLoader(commands.Bot):
                 await ctx.respond(exc)
             except:
                 await ctx.send(exc)
-            log.error("", exc_info=exc)
