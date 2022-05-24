@@ -1,4 +1,4 @@
-from bot.utils.Checks.user import staff_check
+from bot.utils.checks.user import staff_check
 from discord.ext import commands
 from bot.variables import test_guilds, moderator_ids
 
