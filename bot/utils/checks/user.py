@@ -19,9 +19,11 @@ def throw(x):
 
 def verified():
     async def predicate(ctx):
+        roles = [role for role in v.moderator_ids]
+        roles.append(v.verified_role_id)
 
-        return (len([role.id for role in ctx.author.roles if role.id == v.verified_role_id])) \
-            or throw(UserChecks("You must be verified to use this command."))
+        return (len([role.id for role in ctx.author.roles if role.id in roles])) \
+               or throw(UserChecks("You must be verified to use this command."))
 
     return commands.check(predicate)
 
