@@ -1,5 +1,5 @@
 from discord.ext import commands
-from bot.utils.Checks.user import manager
+from bot.utils.checks.user import manager
 import discord
 
 

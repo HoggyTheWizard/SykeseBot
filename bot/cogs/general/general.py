@@ -1,7 +1,7 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash
 from bot.variables import guilds
-from bot.utils.Checks.user import manager
+from bot.utils.checks.user import manager
 from db import main_db
 import discord
 

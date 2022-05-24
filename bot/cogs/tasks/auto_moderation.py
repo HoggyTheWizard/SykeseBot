@@ -1,5 +1,5 @@
 from discord.ext import commands
-from bot.utils.Checks.user import staff_check, embed_perm
+from bot.utils.checks.user import staff_check, embed_perm
 from db import main_db
 from config import host
 import bot.variables as v
