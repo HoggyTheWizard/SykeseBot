@@ -44,6 +44,11 @@ class leveling_main(commands.Cog):
                                       "Leveling.lastTriggeredMessage": int(time.time())}})
                     await levelup(message.guild, users, collection, leveling, message.author, message)
 
+    @slash(description="DEPRECIATED LEVEL COMMAND - USE /PROFILE INSTEAD", guild_ids=guilds)
+    async def level(self, ctx):
+        await ctx.respond("This command has been depreciated, please use the `/profile` command to view leveling data "
+                          "instead.", ephemeral=True)
+
     @slash(guild_ids=guilds, description="A leaderboard displaying the top exp earners in our server.")
     async def level_leaderboard(self, ctx):
         embed = discord.Embed(title="Level Leaderboard",
