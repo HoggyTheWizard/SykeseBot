@@ -22,13 +22,14 @@ class Profile(commands.Cog):
     async def profile(self, ctx, member: Option(discord.Member, "The member you want to view the profile of.",
                                                 required=False)):
 
-        member = ctx.author if member else member
-        collection = users.find_one({"id": member.id})
+        member = ctx.author if not member else member
+        collection = users.find_one({"id": member.id if member.id else 0})
 
-        if not collection or not member:
+        if not member or not collection:
             await ctx.respond("Couldn't find any data for this member.", ephemeral=True)
             return
 
+        # Adjust for synclock users
         name = member.nick if member.nick else member.name
         leveling = get_leveling(collection)
         cached_member = cached_skins.get(member.id)
