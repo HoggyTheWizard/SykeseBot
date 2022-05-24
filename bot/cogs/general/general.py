@@ -1,9 +1,7 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash, Option
 from bot.variables import guilds, moderator_ids
-from bot.utils.Misc.general import get_mojang_from_uuid
-from bot.utils.Checks.channel_checks import channel_restricted
-from bot.utils.Misc.cooldown import cooldown
+from bot.utils.Misc.requests import mojang
 from bot.utils.Checks.user import is_verified, staff_check, manager
 from db import main_db
 import discord
@@ -11,19 +9,15 @@ import discord
 users = main_db["users"]
 
 
-class general(commands.Cog):
+class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @slash(description="Displays the ping of the bot.", guild_ids=guilds)
-    @channel_restricted()
-    @cooldown(seconds=3)
     async def ping(self, ctx):
         await ctx.respond(f"🏓 Pong ({round(self.bot.latency * 1000)}ms)")
 
     @slash(description="Displays the account a user is linked to.", guild_ids=guilds)
-    @channel_restricted()
-    @cooldown(seconds=5)
     @is_verified()
     async def profile(self, ctx, member: Option(discord.Member, "The user you want to view the profile of.") = None):
         if member is None:
@@ -41,11 +35,8 @@ class general(commands.Cog):
             await ctx.respond("This user has indicated that they do not want their linked account to be public. "
                               "As such, this information is only available to server staff.")
         elif collection is not None:
-            mojang = await get_mojang_from_uuid(uuid=collection["uuid"])
-            if mojang is None:
-                username = "Couldn't fetch a username for this user."
-            else:
-                username = mojang["name"]
+            m = await mojang(uuid=collection["uuid"])
+            username = "Couldn't fetch a username for this user." if not m else m["name"]
 
             embed = discord.Embed(title=f"{str(user)}'s Profile", color=discord.Color.blue())
             embed.add_field(name="Linked Account:", value=username, inline=False)
@@ -55,9 +46,6 @@ class general(commands.Cog):
             await ctx.respond("Couldn't find any data for this user.")
 
     @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=guilds)
-    @channel_restricted()
-    @cooldown(seconds=5)
-    @is_verified()
     async def toggleprofile(self, ctx):
         user = users.find_one({"id": ctx.author.id})
         if user.get("publicProfile", True) is True:
@@ -106,13 +94,13 @@ class general(commands.Cog):
             value="Our guild and server are English speaking only, and as such, all conversations should be had in "
                   "English. While we know this may be disappointing to some, there are a few reasons for this:\n"
                   "- It prevents users from not feeling included in the conversation\n"
-                  "- Staff members who cannot speak said language cannot properly moderate it\n"
+                  "- server_management members who cannot speak said language cannot properly moderate it\n"
                   "- When multiple languages are being used at the same time, it disrupts the flow of conversation.",
                   inline=False)
 
         embed.add_field(
-            name="Listen to Server Staff",
-            value="Staff members are here for a reason and have been guided on how to handle certain situations. "
+            name="Listen to Server server_management",
+            value="server_management members are here for a reason and have been guided on how to handle certain situations. "
                   "Because of this, we ask that you follow the advice/instructions given by a staff member. If for "
                   "any reason you don’t believe a staff member is acting in a proper way, "
                   "you may contact another chat moderator.",
@@ -167,4 +155,4 @@ class general(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(general(bot))
+    bot.add_cog(General(bot))

@@ -27,7 +27,7 @@ class Report(commands.Cog):
         modal = ReportModal(title=f"Report Against {str(member)}", ctx=ctx, member=member)
         await ctx.interaction.response.send_modal(modal)
 
-    @report.command(description="Staff Only - Handle a Report")
+    @report.command(description="server_management Only - Handle a Report")
     @mod()
     async def handle(self, ctx, report_id: int,
                      status: Option(str, "The status of the report", choices=["Accepted", "Denied"]),
