@@ -1,5 +1,5 @@
 from discord.commands import slash_command as slash
-from bot.utils.Leveling.leveling import get_leveling, levelup
+from bot.utils.leveling.leveling import get_leveling, levelup
 from bot.utils.checks.user import verified
 from bot.utils.checks.channel import ephemeral
 from bot.variables import guilds
@@ -70,8 +70,8 @@ class leveling_main(commands.Cog):
             else:
                 i += 1
                 embed.add_field(name=f"#{i}",
-                                value=f"<@{user['id']}>\nLevel {user['Leveling'].get('level', 0)}\n"
-                                      f"{'{:,}'.format(user['Leveling'].get('exp', 0))} exp", inline=True)
+                                value=f"<@{user['id']}>\nLevel {user['leveling'].get('level', 0)}\n"
+                                      f"{'{:,}'.format(user['leveling'].get('exp', 0))} exp", inline=True)
             if i >= 20:
                 break
 
@@ -84,8 +84,8 @@ class leveling_main(commands.Cog):
             footer = "Level 0 (0 exp)"
 
         else:
-            footer = (f"Level {'{:,}'.format(author['Leveling'].get('level', 0))} "
-                      f"({'{:,}'.format(author['Leveling'].get('exp', 0))} exp)")
+            footer = (f"Level {'{:,}'.format(author['leveling'].get('level', 0))} "
+                      f"({'{:,}'.format(author['leveling'].get('exp', 0))} exp)")
         embed.set_footer(text=footer, icon_url=ctx.author.avatar.url)
         await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 

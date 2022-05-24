@@ -1,5 +1,5 @@
 from discord.commands import slash_command as slash, Option
-from bot.utils.Leveling.leveling import get_leveling
+from bot.utils.leveling.leveling import get_leveling
 from bot.utils.checks.channel import ephemeral
 from bot.utils.checks.user import verified
 from discord.ext import commands
