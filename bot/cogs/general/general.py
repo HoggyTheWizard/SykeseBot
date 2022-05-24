@@ -1,8 +1,7 @@
 from discord.ext import commands
-from discord.commands import slash_command as slash, Option
-from bot.variables import guilds, moderator_ids
-from bot.utils.Misc.requests import mojang
-from bot.utils.Checks.user import is_verified, staff_check, manager
+from discord.commands import slash_command as slash
+from bot.variables import guilds
+from bot.utils.Checks.user import manager
 from db import main_db
 import discord
 
@@ -16,46 +15,6 @@ class General(commands.Cog):
     @slash(description="Displays the ping of the bot.", guild_ids=guilds)
     async def ping(self, ctx):
         await ctx.respond(f"🏓 Pong ({round(self.bot.latency * 1000)}ms)")
-
-    @slash(description="Displays the account a user is linked to.", guild_ids=guilds)
-    @is_verified()
-    async def profile(self, ctx, member: Option(discord.Member, "The user you want to view the profile of.") = None):
-        if member is None:
-            user = ctx.author
-            account_type = "self"
-        else:
-            user = member
-            account_type = "other"
-
-        collection = users.find_one({"id": user.id})
-
-        if account_type == "other" and collection.get("publicProfile", True) is False and \
-                staff_check(ctx.author, moderator_ids) is False:
-
-            await ctx.respond("This user has indicated that they do not want their linked account to be public. "
-                              "As such, this information is only available to server staff.")
-        elif collection is not None:
-            m = await mojang(uuid=collection["uuid"])
-            username = "Couldn't fetch a username for this user." if not m else m["name"]
-
-            embed = discord.Embed(title=f"{str(user)}'s Profile", color=discord.Color.blue())
-            embed.add_field(name="Linked Account:", value=username, inline=False)
-            embed.add_field(name="UUID:", value=collection["uuid"], inline=False)
-            await ctx.respond(embed=embed)
-        else:
-            await ctx.respond("Couldn't find any data for this user.")
-
-    @slash(description="Toggle whether or not your Minecraft account is publicly shown.", guild_ids=guilds)
-    async def toggleprofile(self, ctx):
-        user = users.find_one({"id": ctx.author.id})
-        if user.get("publicProfile", True) is True:
-            new_setting = False
-        elif user.get("publicProfile") is False:
-            new_setting = True
-        else:
-            new_setting = True
-        users.update_one({"id": ctx.author.id}, {"$set": {"publicProfile": new_setting}})
-        await ctx.respond(f"Successfully set your public profile status to `{new_setting}`")
 
     @commands.command(description="Sends Verification Info Embed")
     @manager()
@@ -100,9 +59,9 @@ class General(commands.Cog):
 
         embed.add_field(
             name="Listen to Server server_management",
-            value="server_management members are here for a reason and have been guided on how to handle certain situations. "
-                  "Because of this, we ask that you follow the advice/instructions given by a staff member. If for "
-                  "any reason you don’t believe a staff member is acting in a proper way, "
+            value="server_management members are here for a reason and have been guided on how to handle certain "
+                  "situations. Because of this, we ask that you follow the advice/instructions given by a staff "
+                  "member. If for any reason you don’t believe a staff member is acting in a proper way, "
                   "you may contact another chat moderator.",
                   inline=False)
 
