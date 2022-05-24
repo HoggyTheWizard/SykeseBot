@@ -2,7 +2,7 @@ from config import hypixel_api_key
 from discord.ext import commands
 from db import main_db
 from config import irl_name
-from bot.utils.Misc.eval_utils import *
+from bot.utils.misc.eval_utils import *
 from traceback import format_exception
 import io
 import contextlib

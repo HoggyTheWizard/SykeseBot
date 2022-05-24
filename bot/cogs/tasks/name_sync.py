@@ -1,5 +1,5 @@
 from discord.ext import commands, tasks
-from bot.utils.Misc.requests import mojang
+from bot.utils.misc.requests import mojang
 from db import main_db
 import bot.variables as v
 import discord

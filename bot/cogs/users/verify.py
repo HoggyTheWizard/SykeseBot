@@ -2,7 +2,7 @@ from discord.ext import commands
 from discord.commands import slash_command as slash
 from bot.variables import guilds
 from db import main_db
-from bot.utils.Misc.requests import player
+from bot.utils.misc.requests import player
 from bot.variables import verified_role_id, unverified_role_id
 from datetime import datetime
 import discord

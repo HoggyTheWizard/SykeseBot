@@ -1,5 +1,5 @@
 from discord.commands import user_command, Option, SlashCommandGroup
-from bot.utils.UI.report_modal import ReportModal
+from bot.utils.ui.report_modal import ReportModal
 from bot.utils.checks.user import mod
 from db import main_db
 from discord.ext import commands
