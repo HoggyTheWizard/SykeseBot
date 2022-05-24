@@ -3,6 +3,7 @@ from bot.utils.Misc.requests import mojang
 from db import main_db
 import bot.variables as v
 import discord
+import config
 
 users = main_db["users"]
 
@@ -14,6 +15,9 @@ class NameSync(commands.Cog):
 
     @tasks.loop(hours=1)
     async def name_sync(self):
+        if config.host != "master":
+            return
+
         guild = self.bot.get_guild(v.guilds[0])
         channel = guild.get_channel(v.bot_logs)
         success = 0
