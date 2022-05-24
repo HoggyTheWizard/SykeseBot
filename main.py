@@ -1,4 +1,4 @@
-from BotLoader import BotLoader
+from bot_loader import BotLoader
 from discord.ext import commands
 import logging
 import discord
