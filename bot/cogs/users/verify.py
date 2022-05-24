@@ -7,6 +7,7 @@ from bot.variables import verified_role_id, unverified_role_id
 from datetime import datetime
 import discord
 import config
+import aiohttp
 
 users = main_db["users"]
 
@@ -22,7 +23,7 @@ class Verify(commands.Cog):
                               f"`{users.find_one({'id': ctx.author.id}).get('uuid', 'ERROR')}`")
         else:
 
-            p = await player(name=username)
+            p = await player(session=aiohttp.ClientSession(), name=username)
 
             if not p:
                 await ctx.respond("Couldn't find any data regarding that account. There are two reasons why this error "
@@ -83,13 +84,6 @@ class Verify(commands.Cog):
                     return
 
                 await ctx.respond("Successfully verified!")
-
-                try:
-                    await ctx.author.remove_roles(ctx.guild.get_role(unverified_role_id))
-                except:
-                    pass
-            else:
-                await ctx.respond("An unexpected error has occurred.")
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
