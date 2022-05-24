@@ -1,18 +1,18 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash
-from bot.utils.Misc.cooldown import cooldown
-from bot.utils.checks.channel_checks import channel_restricted
+from bot.utils.checks.user import verified
+from bot.utils.checks.channel import ephemeral
+
 from bot.variables import guilds
 import discord
 
 
-class help_command(commands.Cog):
+class HelpCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @slash(description="Displays an embed describing different aspects of the server.", guild_ids=guilds)
-    @cooldown(seconds=10)
-    @channel_restricted()
+    @verified()
     async def help(self, ctx):
         embed = discord.Embed(title="Help Menu", description="Welcome to the help menu! Below you can find "
                                                              "information about the different commands and aspects of "
@@ -30,8 +30,8 @@ class help_command(commands.Cog):
         embed.add_field(name="YouTube", value="Sykese has a YouTube channel! You can view it (and hopefully subscribe) "
                                               "by going to https://www.youtube.com/c/sykese", inline=False)
         embed.set_footer(text="Have a good day!", icon_url=ctx.guild.icon.url)
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
 
 def setup(bot):
-    bot.add_cog(help_command(bot))
+    bot.add_cog(HelpCommand(bot))

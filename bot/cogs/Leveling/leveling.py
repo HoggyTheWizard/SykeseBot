@@ -1,5 +1,7 @@
 from discord.commands import slash_command as slash
 from bot.utils.Leveling.leveling import get_leveling, levelup
+from bot.utils.checks.user import verified
+from bot.utils.checks.channel import ephemeral
 from bot.variables import guilds
 from discord.ext import commands
 from db import main_db
@@ -45,11 +47,13 @@ class leveling_main(commands.Cog):
                     await levelup(message.guild, users, collection, leveling, message.author, message)
 
     @slash(description="DEPRECIATED LEVEL COMMAND - USE /PROFILE INSTEAD", guild_ids=guilds)
+    @verified()
     async def level(self, ctx):
         await ctx.respond("This command has been depreciated, please use the `/profile` command to view leveling data "
                           "instead.", ephemeral=True)
 
     @slash(guild_ids=guilds, description="A leaderboard displaying the top exp earners in our server.")
+    @verified()
     async def level_leaderboard(self, ctx):
         embed = discord.Embed(title="Level Leaderboard",
                               description="A leaderboard displaying the top exp earners in our server. "
@@ -83,7 +87,7 @@ class leveling_main(commands.Cog):
             footer = (f"Level {'{:,}'.format(author['Leveling'].get('level', 0))} "
                       f"({'{:,}'.format(author['Leveling'].get('exp', 0))} exp)")
         embed.set_footer(text=footer, icon_url=ctx.author.avatar.url)
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
 
 def setup(bot):

@@ -1,7 +1,8 @@
 from discord.ext import commands
 from discord.commands import slash_command as slash
 from bot.variables import guilds
-from bot.utils.checks.user import manager
+from bot.utils.checks.user import verified, manager
+from bot.utils.checks.channel import ephemeral
 from db import main_db
 import discord
 
@@ -13,8 +14,9 @@ class General(commands.Cog):
         self.bot = bot
 
     @slash(description="Displays the ping of the bot.", guild_ids=guilds)
+    @verified()
     async def ping(self, ctx):
-        await ctx.respond(f"🏓 Pong ({round(self.bot.latency * 1000)}ms)")
+        await ctx.respond(f"🏓 Pong ({round(self.bot.latency * 1000)}ms)", ephemeral=ephemeral(ctx))
 
     @commands.command(description="Sends Verification Info Embed")
     @manager()

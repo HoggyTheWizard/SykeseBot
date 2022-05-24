@@ -1,7 +1,7 @@
 from discord.commands import slash_command as slash, Option
 from discord.ext import commands, tasks
 from bot.utils.checks.user import verified
-from bot.utils.checks.channel_checks import channel_restricted
+from bot.utils.checks.channel import ephemeral
 from bot.variables import guilds
 import datetime
 from db import main_db
@@ -19,14 +19,13 @@ class birthday(commands.Cog):
 
     @slash(description="Add your birthday so you get the birthday role on your birthday.", guild_ids=guilds)
     @verified()
-    @channel_restricted()
     async def birthday(self, ctx, month: Option(int, "The month you were born (e.g. 04)"),
                        day: Option(int, "The day you were born (e.g. 24)"),
                        year: Option(int, "The year you were born (e.g. 2003)")):
         try:
             b_date = users.find_one({"id": ctx.author.id})["Birthday"]["date"]
             b_date_formatted = f"{b_date[0]}{b_date[1]}/{b_date[2]}{b_date[3]}"
-            await ctx.respond(f"You've already set your birthday to {b_date_formatted}")
+            await ctx.respond(f"You've already set your birthday to {b_date_formatted}", ephemeral=True)
             return
         except:
             pass
@@ -43,16 +42,16 @@ class birthday(commands.Cog):
             users.update_one({"id": ctx.author.id}, {"$set": {
                 "Birthday.date": str(date.strftime("%m%d")),
                 "Birthday.year": str(date.strftime("%Y"))}})
-            await ctx.respond(f"Successfully set your birthday to {month}/{day}/{year}")
+            await ctx.respond(f"Successfully set your birthday to {month}/{day}/{year}", ephemeral=ephemeral(ctx))
         except:
-            await ctx.respond("Invalid date provided!")
+            await ctx.respond("Invalid date provided!", ephemeral=True)
 
     @tasks.loop(seconds=60)
     async def birthday_loop(self):
         date = datetime.datetime.now(pytz.timezone("US/Eastern"))
         current_time = date.strftime("%H:%M")
         current_date = date.strftime("%m%d")
-        if current_time == "0:00" and host == "main":
+        if current_time == "0:00" and host == "master":
             guild = self.bot.get_guild(889697074491293736)
             channel = guild.get_channel(889697074491293740)
             role = guild.get_role(911038229862563911)

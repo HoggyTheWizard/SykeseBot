@@ -1,5 +1,7 @@
 from discord.commands import slash_command as slash, Option
 from bot.utils.Leveling.leveling import get_leveling
+from bot.utils.checks.channel import ephemeral
+from bot.utils.checks.user import verified
 from discord.ext import commands
 from datetime import datetime
 from db import main_db
@@ -16,6 +18,7 @@ class Profile(commands.Cog):
         self.bot = bot
 
     @slash(description="View the server profile of you or another member.", guild_ids=v.guilds)
+    @verified()
     async def profile(self, ctx, member: Option(discord.Member, "The member you want to view the profile of.",
                                                 required=False)):
 
@@ -48,7 +51,7 @@ class Profile(commands.Cog):
         embed.add_field(name="Needed EXP:", value=leveling["xp_needed"], inline=False)
         if leveling.get("legacyLevel"):
             embed.add_field(name="Legacy Level:", value=leveling["legacyLevel"], inline=False)
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
 
 def setup(bot):
