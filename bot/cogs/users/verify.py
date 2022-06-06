@@ -3,11 +3,11 @@ from discord.commands import slash_command as slash
 from bot.variables import guilds
 from db import main_db
 from bot.utils.misc.requests import player
-from bot.variables import verified_role_id, unverified_role_id
+from bot.utils.hypixel.player import Player
+from bot.variables import verified_role_id
 from datetime import datetime
 import discord
 import config
-import aiohttp
 
 users = main_db["users"]
 
@@ -18,12 +18,14 @@ class Verify(commands.Cog):
 
     @slash(description="Links a Minecraft account to your Discord account.", guild_ids=guilds)
     async def verify(self, ctx, username):
-        if users.find_one({"id": ctx.author.id}):
-            await ctx.respond("You're already verified to the account "
-                              f"`{users.find_one({'id': ctx.author.id}).get('uuid', 'ERROR')}`")
+        doc = users.find_one({"id": ctx.author.id})
+        if doc:
+            name = ctx.author.nick if ctx.author.nick else ctx.author.name
+            await ctx.respond(f"You're already verified to `{name}` "
+                              f"({doc.get('uuid', 'There was an error getting your UUID')})")
         else:
-
-            p = await player(session=aiohttp.ClientSession(), name=username)
+            p = await player(name=username)
+            obj = Player(player=p)
 
             if not p:
                 await ctx.respond("Couldn't find any data regarding that account. There are two reasons why this error "
@@ -47,7 +49,10 @@ class Verify(commands.Cog):
                                   f"match your linked account or update your linked account.")
 
             elif str(ctx.author) == p["player"]["socialMedia"]["links"]["DISCORD"]:
-                await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
+                await ctx.author.add_roles(ctx.guild.get_role(verified_role_id),
+                                           ctx.guild.get_role(obj.level()[1]),
+                                           ctx.guild.get_role(obj.rank()["role"]))
+
                 users.insert_one({"id": ctx.author.id, "uuid": p["player"]["uuid"],
                                   "verifiedAt": datetime.timestamp(datetime.now())})
 
