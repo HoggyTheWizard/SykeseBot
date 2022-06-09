@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands, tasks
 from bot.utils.hypixel.player import Player, levels, ranks
 from bot.utils.misc.requests import player
@@ -31,6 +32,8 @@ class HypixelSync(commands.Cog):
             # creates a list of all roles the user has pertaining to Hypixel level and rank
             roles = [role.id for role in member.roles if role.id in [x["role"] for x in ranks] or
                      role.id in [x[1] for x in levels]]
+
+            # exempts members if they have the sync lock role or they aren't verified
             if member.bot or len([role for role in roles if role.id == v.sync_lock_id]) or \
                     v.verified_role_id not in roles:
                 exempt += 1
@@ -43,19 +46,28 @@ class HypixelSync(commands.Cog):
                 no_change += 1
                 continue
 
+            # The Player class includes handlers for annoying tasks in the Hypixel API, such as getting Network level
             p = Player(player=request)
 
             # rank
             rank = [x for x in ranks if any(x in roles for x in rank_roles)]
             if p.rank()["role"] != rank:
-                await member.remove_roles(guild.get_role(rank[0]))
-                await member.add_roles(guild.get_role(p.rank()["role"]))
+                try:
+                    await member.remove_roles(guild.get_role(rank[0]))
+                    await member.add_roles(guild.get_role(p.rank()["role"]))
+                except discord.Forbidden:
+                    failed += 1
+                    await channel.send(f"I don't have permission to edit roles for {str(member)} ({member.id})")
 
             # leveling
             level = [x for x in levels if any(x in roles for x in level_roles)]
             if p.level()[1] != level:
-                await member.remove_roles(guild.get_role(level[0]))
-                await member.add_roles(guild.get_role(p.level()[1]))
+                try:
+                    await member.remove_roles(guild.get_role(level[0]))
+                    await member.add_roles(guild.get_role(p.level()[1]))
+                except discord.Forbidden:
+                    failed += 1
+                    await channel.send(f"I don't have permission to edit roles for {str(member)} ({member.id})")
 
         await channel.send(f"Finished syncing names:\n{success} successful\n{failed} failed\n{exempt} "
                            f"exempt\n{no_change} no change")
