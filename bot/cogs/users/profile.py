@@ -1,6 +1,7 @@
 from discord.commands import slash_command as slash, Option
 from bot.utils.leveling.leveling import get_leveling
 from bot.utils.checks.channel import ephemeral
+from bot.utils.misc.requests import mojang
 from bot.utils.checks.user import verified
 from discord.ext import commands
 from datetime import datetime
@@ -29,8 +30,13 @@ class Profile(commands.Cog):
             await ctx.respond("Couldn't find any data for this member.", ephemeral=True)
             return
 
-        # Adjust for synclock users
-        name = member.nick if member.nick else member.name
+        # Add caching for a member's username if they're synclocked
+        lock = [x.id for x in member.roles if x.id == v.sync_lock_id]
+        if len(lock):
+            name = await mojang(collection["uuid"])["name"]
+        else:
+            name = member.nick if member.nick else member.name
+
         leveling = get_leveling(collection)
         cached_member = cached_skins.get(member.id)
 
