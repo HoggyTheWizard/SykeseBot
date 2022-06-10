@@ -12,9 +12,11 @@ class RequestParamsUnfulfilled(core.ApplicationCommandError):
     pass
 
 
-async def mojang(uuid_or_name: str, counter: int = 0):
+async def mojang(uuid: str = None, name: str = None, counter: int = 0):
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://api.mojang.com/users/profiles/minecraft/{uuid_or_name}") as r:
+        link = f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}" if uuid else \
+            f"https://api.mojang.com/users/profiles/minecraft/{name}"
+        async with session.get(link) as r:
             print("m session fetched", r.status)
             # status 429 means the Mojang API ratelimit (600 per 10 min) has been reached
             if r.status == 429:
@@ -23,7 +25,7 @@ async def mojang(uuid_or_name: str, counter: int = 0):
                     raise ApiException(f"The Mojang API ratelimit has been reached and exceeded multiple times. "
                                        f"Please check to make sure the ratelimit has not been changed.")
                 await asyncio.sleep(120)
-                await mojang(uuid_or_name, counter+1)
+                await mojang(uuid, name, counter+1)
 
             return await r.json() if r.status == 200 else None
 
@@ -33,7 +35,7 @@ async def player(uuid=None, name=None, counter=0):
         raise RequestParamsUnfulfilled("You must provide either a UUID or a username.")
 
     if not uuid and name:
-        m = await mojang(uuid_or_name=name)
+        m = await mojang(name=name)
     else:
         m = {"id": uuid}
     counter = counter

@@ -33,7 +33,7 @@ class NameSync(commands.Cog):
                 continue
 
             doc = users.find_one({"id": member.id})
-            request = await mojang(uuid_or_name=doc.get("uuid", None))
+            request = await mojang(uuid=doc.get("uuid", None))
 
             if not doc or not request:
                 no_change += 1

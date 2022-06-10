@@ -24,35 +24,36 @@ class Profile(commands.Cog):
                                                 required=False)):
 
         member = ctx.author if not member else member
-        collection = users.find_one({"id": member.id if member.id else 0})
+        doc = users.find_one({"id": member.id if member.id else 0})
 
-        if not member or not collection:
+        if not member or not doc:
             await ctx.respond("Couldn't find any data for this member.", ephemeral=True)
             return
 
         # Add caching for a member's username if they're synclocked
         lock = [x.id for x in member.roles if x.id == v.sync_lock_id]
         if len(lock):
-            name = await mojang(collection["uuid"])["name"]
+            m = await mojang(doc["uuid"])
+            name = m["name"]
         else:
             name = member.nick if member.nick else member.name
 
-        leveling = get_leveling(collection)
+        leveling = get_leveling(doc)
         cached_member = cached_skins.get(member.id)
 
         if cached_member:
             if int(datetime.now().timestamp()) - cached_member.get("timestamp") >= 3600:
-                skin = f"https://crafatar.com/renders/head/{collection['uuid']}?overlay=true"
+                skin = f"https://crafatar.com/renders/head/{doc['uuid']}?overlay=true"
                 cached_skins[member.id]["skin"] = skin
                 cached_skins[member.id]["timestamp"] = int(datetime.now().timestamp())
             else:
                 skin = cached_skins[member.id]["skin"]
         else:
-            skin = f"https://crafatar.com/renders/head/{collection['uuid']}?overlay=true"
+            skin = f"https://crafatar.com/renders/head/{doc['uuid']}?overlay=true"
 
         embed = discord.Embed(title=f"{str(name)}'s Profile", color=member.color)
         embed.set_thumbnail(url=skin)
-        embed.add_field(name="Linked Account:", value=f"{name} ({collection['uuid']})", inline=False)
+        embed.add_field(name="Linked Account:", value=f"{name} ({doc['uuid']})", inline=False)
         embed.add_field(name="Level:", value=leveling["level"], inline=False)
         embed.add_field(name="Experience:", value=leveling["exp"], inline=False)
         embed.add_field(name="Needed EXP:", value=leveling["xp_needed"], inline=False)
