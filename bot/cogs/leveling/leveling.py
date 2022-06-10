@@ -30,10 +30,10 @@ class leveling_main(commands.Cog):
             return
 
         else:
-            collection = users.find_one({"id": message.author.id})
+            doc = users.find_one({"id": message.author.id})
 
-            if not collection and message.channel.id not in blacklisted_channels:
-                leveling = get_leveling(collection)
+            if not doc and message.channel.id not in blacklisted_channels:
+                leveling = get_leveling(doc)
                 current_exp = leveling["exp"]
                 last_triggered_message = leveling["lastTriggeredMessage"]
 
@@ -44,7 +44,7 @@ class leveling_main(commands.Cog):
                     users.update_one({"id": message.author.id}, {"$set":
                                      {"Leveling.exp": current_exp + added_exp,
                                       "Leveling.lastTriggeredMessage": int(time.time())}})
-                    await levelup(message.guild, users, collection, leveling, message.author, message)
+                    await levelup(message.guild, users, doc, leveling, message.author, message)
 
     @slash(description="DEPRECIATED LEVEL COMMAND - USE /PROFILE INSTEAD", guild_ids=guilds)
     @verified()

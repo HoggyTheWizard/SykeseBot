@@ -14,13 +14,13 @@ def get_leveling(collection):
     return payload
 
 
-async def levelup(guild, users, collection, leveling, member, message=None):
+async def levelup(guild, users, doc, leveling, member, message=None):
     exp = leveling["exp"]
     lvl = leveling["level"]
     # Taken from mee6 (the only good thing they've ever done)
     levelup_xp_needed = 5 * lvl ** 2 + 50 * lvl + 100 - exp
     if exp >= levelup_xp_needed:
-        users.update_one({"id": collection["id"]}, {"$inc": {"Leveling.level": 1}})
+        users.update_one({"id": doc["id"]}, {"$inc": {"Leveling.level": 1}})
         if str(lvl+1) in levelup_actions:
             added_role = guild.get_role(levelup_actions[str(lvl+1)])
             if message is None:
