@@ -11,7 +11,7 @@ import discord
 
 users = main_db["users"]
 # To prevent unnecessary API calls, the bot will only update a skin every hour
-cached_skins = {}
+cached_profile = {}
 
 
 class Profile(commands.Cog):
@@ -30,7 +30,6 @@ class Profile(commands.Cog):
             await ctx.respond("Couldn't find any data for this member.", ephemeral=True)
             return
 
-        # Add caching for a member's username if they're synclocked
         lock = [x.id for x in member.roles if x.id == v.sync_lock_id]
         if len(lock):
             m = await mojang(doc["uuid"])
@@ -39,15 +38,15 @@ class Profile(commands.Cog):
             name = member.nick if member.nick else member.name
 
         leveling = get_leveling(doc)
-        cached_member = cached_skins.get(member.id)
+        cached_member = cached_profile.get(member.id)
 
         if cached_member:
             if int(datetime.now().timestamp()) - cached_member.get("timestamp") >= 3600:
                 skin = f"https://crafatar.com/renders/head/{doc['uuid']}?overlay=true"
-                cached_skins[member.id]["skin"] = skin
-                cached_skins[member.id]["timestamp"] = int(datetime.now().timestamp())
+                cached_profile[member.id]["skin"] = skin
+                cached_profile[member.id]["timestamp"] = int(datetime.now().timestamp())
             else:
-                skin = cached_skins[member.id]["skin"]
+                skin = cached_profile[member.id]["skin"]
         else:
             skin = f"https://crafatar.com/renders/head/{doc['uuid']}?overlay=true"
 
