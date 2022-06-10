@@ -41,8 +41,7 @@ class Profile(commands.Cog):
         cached_member = cached_skins.get(member.id)
 
         if cached_member:
-            # This check is wrong, fix
-            if cached_member.get("timestamp") + 3600 >= int(datetime.now().timestamp()):
+            if int(datetime.now().timestamp()) - cached_member.get("timestamp") >= 3600:
                 skin = f"https://crafatar.com/renders/head/{collection['uuid']}?overlay=true"
                 cached_skins[member.id]["skin"] = skin
                 cached_skins[member.id]["timestamp"] = int(datetime.now().timestamp())
