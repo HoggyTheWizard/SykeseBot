@@ -1,0 +1,6 @@
+git+https://github.com/Pycord-Development/pycord@429dadce242bcdd8cfc224a072a5558497d0618b
+requests
+dnspython
+aiohttp
+pymongo
+pytz
