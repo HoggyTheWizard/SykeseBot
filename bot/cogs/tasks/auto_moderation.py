@@ -10,7 +10,7 @@ gif_domains = ["https://tenor.com/", "tenor.com"]
 blacklisted_domains = ["https://discord.gg/", "discord.gg/"]
 
 
-class auto_moderation(commands.Cog):
+class AutoModeration(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -30,4 +30,4 @@ class auto_moderation(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(auto_moderation(bot))
+    bot.add_cog(AutoModeration(bot))
