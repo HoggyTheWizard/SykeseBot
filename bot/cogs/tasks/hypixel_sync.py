@@ -1,10 +1,10 @@
-import discord
 from discord.ext import commands, tasks
 from bot.utils.hypixel.player import Player, levels, ranks
 from bot.utils.misc.requests import player
 from db import main_db
 import bot.variables as v
 import config
+import discord
 
 users = main_db["users"]
 
@@ -33,7 +33,7 @@ class HypixelSync(commands.Cog):
             roles = [role.id for role in member.roles if role.id in [x["role"] for x in ranks] or
                      role.id in [x[1] for x in levels]]
 
-            # exempts members if they have the sync lock role or they aren't verified
+            # exempts members if they have the sync lock role or aren't verified
             if member.bot or len([role for role in roles if role.id == v.sync_lock_id]) or \
                     v.verified_role_id not in roles:
                 exempt += 1
