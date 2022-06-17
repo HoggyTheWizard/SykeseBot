@@ -17,7 +17,7 @@ blacklisted_channels = [
             ]
 
 
-class leveling_main(commands.Cog):
+class LevelingMain(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -91,4 +91,4 @@ class leveling_main(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(leveling_main(bot))
+    bot.add_cog(LevelingMain(bot))
