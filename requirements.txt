@@ -1,4 +1,4 @@
-git+https://github.com/Pycord-Development/pycord@429dadce242bcdd8cfc224a072a5558497d0618b
+git+https://github.com/Pycord-Development/pycord@99b29e79c6b5a1a866e99ad15bc32cc6572f73db
 requests
 dnspython
 aiohttp
