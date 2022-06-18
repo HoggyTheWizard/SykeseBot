@@ -52,12 +52,12 @@ class Profile(commands.Cog):
 
         embed = discord.Embed(title=f"{str(name)}'s Profile", color=member.color)
         embed.set_thumbnail(url=skin)
-        embed.add_field(name="Linked Account:", value=f"{name} ({doc['uuid']})", inline=False)
-        embed.add_field(name="Level:", value=leveling["level"], inline=False)
-        embed.add_field(name="Experience:", value=leveling["exp"], inline=False)
-        embed.add_field(name="Needed EXP:", value=leveling["xp_needed"], inline=False)
+        embed.add_field(name="Linked Account:", value=f"{name}", inline=False)
+        embed.add_field(name="Level:", value=leveling["level"], inline=True)
+        embed.add_field(name="Experience:", value=leveling["exp"], inline=True)
+        embed.add_field(name="Needed EXP:", value=leveling["xp_needed"], inline=True)
         if leveling.get("legacyLevel"):
-            embed.add_field(name="Legacy Level:", value=leveling["legacyLevel"], inline=False)
+            embed.add_field(name="Legacy Level:", value=leveling["legacyLevel"], inline=True)
         await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
 
