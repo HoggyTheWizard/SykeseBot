@@ -30,6 +30,7 @@ class BotLoader(commands.Bot):
             return
         else:
             await ctx.send(exc)
+            log.error("", exc_info=exc)
 
     async def on_application_command_error(self, ctx, exc):
         if isinstance(exc, core.CheckFailure):
@@ -39,3 +40,4 @@ class BotLoader(commands.Bot):
                 await ctx.respond(exc)
             except:
                 await ctx.send(exc)
+            log.error("", exc_info=exc)
