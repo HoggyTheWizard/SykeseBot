@@ -7,9 +7,7 @@ levelup_actions = {
 
 def get_leveling(collection):
     obj = collection.get("Leveling", None)
-    payload = obj if obj else {"exp": 100, "level": 1}
-    xp_needed = 5 * obj["level"] ** 2 + 50 * obj["level"] + 100 - obj["exp"]
-    payload["xp_needed"] = xp_needed
+    payload = obj if obj else {"exp": 0, "level": 0, "expGainedSinceLevelup": 0}
     payload["lastTriggeredMessage"] = payload["lastTriggeredMessage"] if "lastTriggeredMessage" in payload else None
     return payload
 
@@ -17,10 +15,13 @@ def get_leveling(collection):
 async def levelup(guild, users, doc, leveling, member, message=None):
     exp = leveling["exp"]
     lvl = leveling["level"]
-    # Taken from mee6 (the only good thing they've ever done)
-    levelup_xp_needed = 5 * lvl ** 2 + 50 * lvl + 100 - exp
-    if exp >= levelup_xp_needed:
-        users.update_one({"id": doc["id"]}, {"$inc": {"Leveling.level": 1}})
+    levelup_xp_needed = 5 * (lvl ** 2) + 50 * lvl + 100
+    await message.channel.send(f"formula: {levelup_xp_needed} | exp: {exp}")
+    if leveling.get("expGainedSinceLevelup", 0) >= levelup_xp_needed:
+        await message.channel.send(f"triggered levelup ({lvl+1})")
+        users.update_one({"id": doc["id"]}, {"$inc": {"Leveling.level": 1,
+                                                      # not gained_since_levelup because it can go over
+                                                      "Leveling.expGainedSinceLevelup": -levelup_xp_needed}})
         if str(lvl+1) in levelup_actions:
             added_role = guild.get_role(levelup_actions[str(lvl+1)])
             if message is None:

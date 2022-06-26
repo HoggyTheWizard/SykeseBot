@@ -12,9 +12,9 @@ import config
 
 users = main_db["users"]
 blacklisted_channels = [
-                893934059804319775,  # verification
-                893936274291974164  # bots
-            ]
+    893934059804319775,  # verification
+    893936274291974164  # bots
+]
 
 
 class LevelingMain(commands.Cog):
@@ -25,25 +25,41 @@ class LevelingMain(commands.Cog):
     async def on_message(self, message):
         if config.host != "master":
             return
-        elif not message.guild or message.guild.id not in [889697074491293736] or message.author.bot or \
+            # 889697074491293736
+        elif not message.guild or message.guild.id not in [707963219536248982] or message.author.bot or \
                 message.type == discord.MessageType.application_command:
             return
 
         else:
             doc = users.find_one({"id": message.author.id})
 
-            if not doc and message.channel.id not in blacklisted_channels:
+            if doc and message.channel.id not in blacklisted_channels:
                 leveling = get_leveling(doc)
-                current_exp = leveling["exp"]
                 last_triggered_message = leveling["lastTriggeredMessage"]
 
                 # 90 represents the cooldown
-                if not last_triggered_message or last_triggered_message + 90 < int(time.time()) or \
-                        not leveling.get("expBlacklist", False):
+                if not last_triggered_message or last_triggered_message + 90 < int(time.time()) and not \
+                        doc.get("levelingBlacklist"):
+
+                    if "Leveling" not in doc:
+                        # new Leveling profile created
+                        users.update_one({"id": message.author.id}, {"$set": {
+                            "Leveling.exp": 20,
+                            "Leveling.level": 0,
+                            "Leveling.lastTriggeredMessage": int(time.time()),
+                            "Leveling.expGainedSinceLevelup": 20
+                        }})
+                        return
+
                     added_exp = random.randint(15, 20)
-                    users.update_one({"id": message.author.id}, {"$set":
-                                     {"Leveling.exp": current_exp + added_exp,
-                                      "Leveling.lastTriggeredMessage": int(time.time())}})
+                    leveling["exp"] += added_exp
+                    leveling["expGainedSinceLevelup"] += added_exp
+                    users.update_one({"id": message.author.id}, {"$set": {
+                                                                    "Leveling.lastTriggeredMessage": int(time.time())
+                    }})
+
+                    users.update_one({"id": message.author.id}, {"$inc": {"Leveling.exp": added_exp,
+                                                                          "Leveling.expGainedSinceLevelup": added_exp}})
                     await levelup(message.guild, users, doc, leveling, message.author, message)
 
     @slash(description="DEPRECIATED LEVEL COMMAND - USE /PROFILE INSTEAD", guild_ids=guilds)
