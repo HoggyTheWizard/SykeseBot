@@ -54,8 +54,10 @@ class Profile(commands.Cog):
         embed.set_thumbnail(url=skin)
         embed.add_field(name="Linked Account:", value=f"{name}", inline=False)
         embed.add_field(name="Level:", value=leveling["level"], inline=True)
-        embed.add_field(name="Experience:", value=leveling["exp"], inline=True)
-        embed.add_field(name="Needed EXP:", value=leveling["xp_needed"], inline=True)
+        embed.add_field(name="Total EXP:", value=leveling["exp"], inline=True)
+        embed.add_field(name="Needed EXP:",
+                        value=(5 * (leveling["level"] ** 2) + 50 * leveling["level"] + 100) -
+                        leveling["expGainedSinceLevelup"], inline=True)
         if leveling.get("legacyLevel"):
             embed.add_field(name="Legacy Level:", value=leveling["legacyLevel"], inline=True)
         await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
