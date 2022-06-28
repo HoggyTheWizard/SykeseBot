@@ -3,7 +3,6 @@ from bot.utils.misc.requests import mojang
 from db import main_db
 import bot.variables as v
 import discord
-import aiohttp
 import config
 
 users = main_db["users"]
@@ -21,7 +20,6 @@ class NameSync(commands.Cog):
 
         guild = self.bot.get_guild(v.guilds[0])
         channel = guild.get_channel(v.bot_logs)
-        session = aiohttp.ClientSession()
         success = 0
         exempt = 0
         no_change = 0

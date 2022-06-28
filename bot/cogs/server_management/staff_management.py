@@ -3,7 +3,7 @@ from bot.utils.checks.user import manager
 import discord
 
 
-class staff_management(commands.Cog):
+class StaffManagement(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -25,4 +25,4 @@ class staff_management(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(staff_management(bot))
+    bot.add_cog(StaffManagement(bot))

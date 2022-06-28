@@ -53,5 +53,3 @@ class Player:
             rank = None
 
         return ranks[rank]
-
-
