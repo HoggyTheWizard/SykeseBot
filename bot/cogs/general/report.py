@@ -1,4 +1,4 @@
-from discord.commands import user_command, Option, SlashCommandGroup
+from discord.commands import user_command, Option, SlashCommandGroup, slash_command as slash
 from bot.utils.ui.report_modal import ReportModal
 from bot.utils.checks.user import mod
 from db import main_db
@@ -27,12 +27,12 @@ class Report(commands.Cog):
         modal = ReportModal(title=f"Report Against {str(member)}", ctx=ctx, member=member)
         await ctx.interaction.response.send_modal(modal)
 
-    @report.command(description="server_management Only - Handle a Report")
+    @slash(description="Handles an active report.", guild_ids=v.guilds)
     @mod()
-    async def handle(self, ctx, report_id: int,
-                     status: Option(str, "The status of the report", choices=["Accepted", "Denied"]),
-                     reason: Option(str, "The reason for the response")
-                     ):
+    async def handlereport(self, ctx, report_id: int,
+                           status: Option(str, "The status of the report", choices=["Accepted", "Denied"]),
+                           reason: Option(str, "The reason for the response")
+                           ):
         report = reports.find_one({"id": report_id})
         if report_id is None or report is None:
             await ctx.respond("That report doesn't exist.", delete_after=5)
