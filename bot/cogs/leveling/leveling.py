@@ -25,8 +25,7 @@ class LevelingMain(commands.Cog):
     async def on_message(self, message):
         if config.host != "master":
             return
-            # 889697074491293736
-        elif not message.guild or message.guild.id not in [707963219536248982] or message.author.bot or \
+        elif not message.guild or message.guild.id not in [889697074491293736] or message.author.bot or \
                 message.type == discord.MessageType.application_command:
             return
 
