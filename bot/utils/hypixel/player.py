@@ -34,7 +34,7 @@ class Player:
                    levels[i][0] <= level < levels[i + 1 if i < len(levels) - 1 else len(levels) - 1][0]]
         # Returns the user's level and the role that corresponds with it (if none found the level is above the highest
         # level listed in the levels dict, so it defaults the highest)
-        return level, matched[1] if len(matched) else levels[len(levels) - 1][1]
+        return level, matched[0] if len(matched) else levels[len(levels) - 1][0]
 
     def rank(self):
         if "rank" in self.player["player"] and not self.player["player"]["rank"] == "NORMAL":
