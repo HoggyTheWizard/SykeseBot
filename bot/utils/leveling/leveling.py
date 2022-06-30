@@ -1,7 +1,7 @@
 levelup_actions = {
-    "15": 933130048192544838, "25": 933130059731066930, "50": 933130064927784970,
-    "75": 933130067284992050, "100": 933130061949849691, "125": 933130057063481384,
-    "150": 933130054437859428, "175": 933130051522809936, "200": 933130038356877373,
+    "1": 933130048192544838, "5": 933130059731066930, "10": 933130064927784970,
+    "20": 933130067284992050, "25": 933130061949849691, "40": 933130057063481384,
+    "50": 933130054437859428, "65": 933130051522809936, "75": 933130038356877373,
 }
 
 
@@ -13,12 +13,10 @@ def get_leveling(collection):
 
 
 async def levelup(guild, users, doc, leveling, member, message=None):
-    exp = leveling["exp"]
     lvl = leveling["level"]
     levelup_xp_needed = 5 * (lvl ** 2) + 50 * lvl + 100
-    await message.channel.send(f"formula: {levelup_xp_needed} | exp: {exp}")
+
     if leveling.get("expGainedSinceLevelup", 0) >= levelup_xp_needed:
-        await message.channel.send(f"triggered levelup ({lvl+1})")
         users.update_one({"id": doc["id"]}, {"$inc": {"Leveling.level": 1,
                                                       # not gained_since_levelup because it can go over
                                                       "Leveling.expGainedSinceLevelup": -levelup_xp_needed}})
