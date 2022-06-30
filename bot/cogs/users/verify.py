@@ -49,9 +49,11 @@ class Verify(commands.Cog):
                                   f"match your linked account or update your linked account.")
 
             elif str(ctx.author) == p["player"]["socialMedia"]["links"]["DISCORD"]:
-                await ctx.author.add_roles(ctx.guild.get_role(verified_role_id),
-                                           ctx.guild.get_role(obj.level()[1]),
-                                           ctx.guild.get_role(obj.rank()["role"]))
+                await ctx.author.add_roles(
+                    ctx.guild.get_role(verified_role_id),
+                    ctx.guild.get_role(obj.level()[1]),
+                    ctx.guild.get_role(obj.rank()["role"])
+                )
 
                 users.insert_one({"id": ctx.author.id, "uuid": p["player"]["uuid"],
                                   "verifiedAt": datetime.timestamp(datetime.now())})
