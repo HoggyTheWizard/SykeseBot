@@ -85,8 +85,8 @@ class LevelingMain(commands.Cog):
             else:
                 i += 1
                 embed.add_field(name=f"#{i}",
-                                value=f"<@{user['id']}>\nLevel {user['leveling'].get('level', 0)}\n"
-                                      f"{'{:,}'.format(user['leveling'].get('exp', 0))} exp", inline=True)
+                                value=f"<@{user['id']}>\nLevel {user['Leveling'].get('level', 0)}\n"
+                                      f"{'{:,}'.format(user['Leveling'].get('exp', 0))} exp", inline=True)
             if i >= 20:
                 break
 
@@ -99,8 +99,8 @@ class LevelingMain(commands.Cog):
             footer = "Level 0 (0 exp)"
 
         else:
-            footer = (f"Level {'{:,}'.format(author['leveling'].get('level', 0))} "
-                      f"({'{:,}'.format(author['leveling'].get('exp', 0))} exp)")
+            footer = (f"Level {'{:,}'.format(author['Leveling'].get('level', 0))} "
+                      f"({'{:,}'.format(author['Leveling'].get('exp', 0))} exp)")
         embed.set_footer(text=footer, icon_url=ctx.author.avatar.url)
         await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
