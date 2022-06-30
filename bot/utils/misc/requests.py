@@ -39,6 +39,10 @@ async def player(uuid=None, name=None, counter=0):
     else:
         m = {"id": uuid}
     counter = counter
+
+    if m is None:
+        return None
+
     async with aiohttp.ClientSession() as session:
         async with session.get(f"https://api.hypixel.net/player?key={key}&uuid={m['id']}") as r:
             # Hypixel API ratelimit reached (120 per minute)
