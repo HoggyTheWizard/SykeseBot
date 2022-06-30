@@ -104,6 +104,12 @@ class LevelingMain(commands.Cog):
         embed.set_footer(text=footer, icon_url=ctx.author.avatar.url)
         await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
+        if "Notifications" not in author or author["Notifications"].get("levelFixUpdate", False) is False:
+            await ctx.respond("The way levels are calculated has been changed due to a bug found within the original "
+                              "code. You can read about this change in <#890085670696124436>. This message will not "
+                              "appear again.", ephemeral=True)
+            users.update_one({"id": ctx.author.id}, {"$set": {"Notifications.levelFixUpdate": True}})
+
 
 def setup(bot):
     bot.add_cog(LevelingMain(bot))

@@ -62,6 +62,12 @@ class Profile(commands.Cog):
             embed.add_field(name="Legacy Level:", value=leveling["legacyLevel"], inline=True)
         await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
+        if "Notifications" not in doc or doc["Notifications"].get("levelFixUpdate", False) is False:
+            await ctx.respond("The way levels are calculated has been changed due to a bug found within the original "
+                              "code. You can read about this change in <#890085670696124436>. This message will not "
+                              "appear again.", ephemeral=True)
+            users.update_one({"id": member.id}, {"$set": {"Notifications.levelFixUpdate": True}})
+
 
 def setup(bot):
     bot.add_cog(Profile(bot))
