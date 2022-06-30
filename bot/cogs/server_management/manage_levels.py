@@ -14,7 +14,7 @@ class ManageLeveling(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash(guild_ids=v.guilds)
+    @slash(guild_ids=v.guilds, description="Wipes leveling data for a user.")
     @manager()
     async def wipe(self, ctx,
                    member: Option(discord.Member, description="The member you want to wipe leveling data for."),
