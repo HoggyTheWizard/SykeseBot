@@ -58,10 +58,8 @@ class Profile(commands.Cog):
         embed.add_field(name="Needed EXP:",
                         value=(5 * (leveling["level"] ** 2) + 50 * leveling["level"] + 100) -
                         leveling["expGainedSinceLevelup"], inline=True)
-        if leveling.get("legacyLevel"):
-            embed.add_field(name="Legacy Level:", value=leveling["legacyLevel"], inline=True)
-        await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
 
+        await ctx.respond(embed=embed, ephemeral=ephemeral(ctx))
         if "Notifications" not in doc or doc["Notifications"].get("levelFixUpdate", False) is False:
             await ctx.respond("The way levels are calculated has been changed due to a bug found within the original "
                               "code. You can read about this change in <#890085670696124436>. This message will not "
