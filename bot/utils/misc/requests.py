@@ -17,7 +17,6 @@ async def mojang(uuid: str = None, name: str = None, counter: int = 0):
         link = f"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}" if uuid else \
             f"https://api.mojang.com/users/profiles/minecraft/{name}"
         async with session.get(link) as r:
-            print("m session fetched", r.status)
             # status 429 means the Mojang API ratelimit (600 per 10 min) has been reached
             if r.status == 429:
 
