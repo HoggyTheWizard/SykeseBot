@@ -21,7 +21,7 @@ class NameSync(commands.Cog):
                 int(datetime.now().timestamp()):
             return
 
-        print("Running Hypixel Sync task...")
+        print("Running Name Sync task...")
         settings.update_one({"id": "hypixel_sync"}, {"$set": {"lastRun": int(datetime.now().timestamp())}})
 
         guild = self.bot.get_guild(v.guilds[0])
