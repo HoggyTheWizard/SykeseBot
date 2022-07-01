@@ -2,10 +2,12 @@ from discord.ext import commands, tasks
 from bot.utils.misc.requests import mojang
 from db import main_db
 import bot.variables as v
+from datetime import datetime
 import discord
 import config
 
 users = main_db["users"]
+settings = main_db["settings"]
 
 
 class NameSync(commands.Cog):
@@ -13,10 +15,14 @@ class NameSync(commands.Cog):
         self.bot = bot
         self.name_sync.start()
 
-    @tasks.loop(hours=1)
+    @tasks.loop(minutes=30)
     async def name_sync(self):
-        if config.host != "master":
+        if config.host != "master" or settings.find_one({"id": "name_sync"})["lastRun"] + 3600 > \
+                int(datetime.now().timestamp()):
             return
+
+        print("Running Hypixel Sync task...")
+        settings.update_one({"id": "hypixel_sync"}, {"$set": {"lastRun": int(datetime.now().timestamp())}})
 
         guild = self.bot.get_guild(v.guilds[0])
         channel = guild.get_channel(v.bot_logs)
@@ -31,19 +37,34 @@ class NameSync(commands.Cog):
                 continue
 
             doc = users.find_one({"id": member.id})
-            request = await mojang(uuid=doc.get("uuid", None))
 
-            if not doc or not request:
+            if not doc:
                 no_change += 1
                 continue
 
-            elif not member.nick and request["name"] != member.name or member.nick != request["name"]:
+            request = await mojang(uuid=doc.get("uuid", None))
+            if not request:
+                no_change += 1
+                continue
+
+            if not member.nick and request["name"] != member.name:
+                try:
+
+                    await member.edit(nick=request["name"])
+                    success += 1
+                except discord.Forbidden:
+                    failed += 1
+                    await channel.send(f"I don't have permission to change {str(member)}'s nickname. ({member.id})")
+                    continue
+
+            elif member.nick != request["name"]:
                 try:
                     await member.edit(nick=request["name"])
                     success += 1
                 except discord.Forbidden:
                     failed += 1
                     await channel.send(f"I don't have permission to change {str(member)}'s nickname. ({member.id})")
+                    continue
 
         await channel.send(f"Finished syncing names:\n{success} successful\n{failed} failed\n{exempt} "
                            f"exempt\n{no_change} no change")

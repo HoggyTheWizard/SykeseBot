@@ -3,10 +3,12 @@ from bot.utils.hypixel.player import Player, levels, ranks
 from bot.utils.misc.requests import player
 from db import main_db
 import bot.variables as v
+from datetime import datetime
 import config
 import discord
 
 users = main_db["users"]
+settings = main_db["settings"]
 
 
 class HypixelSync(commands.Cog):
@@ -14,14 +16,22 @@ class HypixelSync(commands.Cog):
         self.bot = bot
         self.hypixel_sync.start()
 
-    @tasks.loop(hours=24)
+    @tasks.loop(minutes=30)
     async def hypixel_sync(self):
-        if config.host != "master":
+        if config.host != "master" or settings.find_one({"id": "hypixel_sync"})["lastRun"] + 86400 > \
+                int(datetime.now().timestamp()):
             return
 
-        rank_roles = [x["role"] for x in ranks]
-        level_roles = [x[1] for x in levels]
+        print("Running Hypixel Sync task...")
+        settings.update_one({"id": "hypixel_sync"}, {"$set": {"lastRun": int(datetime.now().timestamp())}})
         guild = self.bot.get_guild(v.guilds[0])
+
+        # rank information is stored in a dict. In the list comp, x is the key
+        rank_roles = [guild.get_role(ranks[x]["role"]) for x in ranks]
+
+        # level roles are stored in a list of tuples, where [0] is the required level and [1] is the role
+        level_roles = [guild.get_role(x[1]) for x in levels]
+
         channel = guild.get_channel(v.bot_logs)
         success = 0
         exempt = 0
@@ -29,48 +39,53 @@ class HypixelSync(commands.Cog):
         failed = 0
 
         for member in guild.members:
-            # creates a list of all roles the user has pertaining to Hypixel level and rank
-            roles = [role.id for role in member.roles if role.id in [x["role"] for x in ranks] or
-                     role.id in [x[1] for x in levels]]
-
-            # exempts members if they have the sync lock role or aren't verified
-            if member.bot or len([role for role in roles if role.id == v.sync_lock_id]) or \
-                    v.verified_role_id not in roles:
-                exempt += 1
-                continue
-
             doc = users.find_one({"id": member.id})
-            request = await player(uuid=doc.get("uuid", None))
 
-            if not doc or not request:
+            if not doc:
                 no_change += 1
                 continue
 
-            # The Player class includes handlers for annoying tasks in the Hypixel API, such as getting Network level
-            p = Player(player=request)
+            request = await player(uuid=doc.get("uuid", None))
 
-            # rank
-            rank = [x for x in ranks if any(x in roles for x in rank_roles)]
-            if p.rank()["role"] != rank:
+            if not request:
+                no_change += 1
+                continue
+
+            # a list of role ids the member has
+            member_roles = [role.id for role in member.roles]
+
+            if v.sync_lock_id in member_roles or member.bot:
+                exempt += 1
+                continue
+
+            p = Player(request)
+            # level returns the user's actual Hypixel level and the role associated with it, in that order
+            level, corresponding_level_role = p.level()
+            corresponding_rank_role = p.rank()
+
+            # handling level role
+            if corresponding_level_role not in member_roles:
                 try:
-                    await member.remove_roles(guild.get_role(rank[0]))
-                    await member.add_roles(guild.get_role(p.rank()["role"]))
+                    await member.remove_roles(*level_roles)
+                    await member.add_roles(corresponding_level_role)
+                    success += 1
                 except discord.Forbidden:
                     failed += 1
-                    await channel.send(f"I don't have permission to edit roles for {str(member)} ({member.id})")
+                    await channel.send(f"I don't have permission to add {str(corresponding_level_role)} to "
+                                       f"{str(member)}.")
 
-            # leveling
-            level = [x for x in levels if any(x in roles for x in level_roles)]
-            if p.level()[1] != level:
+            # handling rank role
+            if corresponding_rank_role not in member_roles:
                 try:
-                    await member.remove_roles(guild.get_role(level[0]))
-                    await member.add_roles(guild.get_role(p.level()[1]))
+                    await member.remove_roles(*rank_roles)
+                    await member.add_roles(corresponding_rank_role)
+                    success += 1
                 except discord.Forbidden:
                     failed += 1
-                    await channel.send(f"I don't have permission to edit roles for {str(member)} ({member.id})")
+                    await channel.send(f"I don't have permission to add {str(p.rank()['role'])} to {str(member)}.")
 
-        await channel.send(f"Finished syncing names:\n{success} successful\n{failed} failed\n{exempt} "
-                           f"exempt\n{no_change} no change")
+        await channel.send(f"Finished syncing Hypixel levels and ranks:\n{success} successful\n{failed} failed\n"
+                           f"{exempt} exempt\n{no_change} no change")
 
     @hypixel_sync.before_loop
     async def before_hypixel_sync(self):
