@@ -23,7 +23,7 @@ class HypixelSync(commands.Cog):
             return
 
         print("Running Hypixel Sync task...")
-        settings.update_one({"id": "hypixel_sync"}, {"$set": {"lastRun": int(datetime.now().timestamp())}})
+        settings.update_one({"id": "TASKS"}, {"$set": {"hypixel_sync.lastRun": int(datetime.now().timestamp())}})
         guild = self.bot.get_guild(v.guilds[0])
 
         # rank information is stored in a dict. In the list comp, x is the key
@@ -67,7 +67,7 @@ class HypixelSync(commands.Cog):
             if corresponding_level_role not in member_roles:
                 try:
                     await member.remove_roles(*level_roles)
-                    await member.add_roles(corresponding_level_role)
+                    await member.add_roles(guild.get_role(corresponding_level_role))
                     success += 1
                 except discord.Forbidden:
                     failed += 1
@@ -78,7 +78,7 @@ class HypixelSync(commands.Cog):
             if corresponding_rank_role not in member_roles:
                 try:
                     await member.remove_roles(*rank_roles)
-                    await member.add_roles(corresponding_rank_role)
+                    await member.add_roles(guild.get_role(corresponding_rank_role))
                     success += 1
                 except discord.Forbidden:
                     failed += 1

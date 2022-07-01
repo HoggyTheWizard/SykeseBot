@@ -22,7 +22,7 @@ class NameSync(commands.Cog):
             return
 
         print("Running Name Sync task...")
-        settings.update_one({"id": "hypixel_sync"}, {"$set": {"lastRun": int(datetime.now().timestamp())}})
+        settings.update_one({"id": "TASKS"}, {"$set": {"name_sync.lastRun": int(datetime.now().timestamp())}})
 
         guild = self.bot.get_guild(v.guilds[0])
         channel = guild.get_channel(v.bot_logs)
