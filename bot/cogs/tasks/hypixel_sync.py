@@ -18,7 +18,7 @@ class HypixelSync(commands.Cog):
 
     @tasks.loop(minutes=30)
     async def hypixel_sync(self):
-        if config.host != "master" or settings.find_one({"id": "hypixel_sync"})["lastRun"] + 86400 > \
+        if config.host != "master" or settings.find_one({"id": "TASKS"})["hypixel_sync"]["lastRun"] + 86400 > \
                 int(datetime.now().timestamp()):
             return
 

@@ -17,7 +17,7 @@ class NameSync(commands.Cog):
 
     @tasks.loop(minutes=30)
     async def name_sync(self):
-        if config.host != "master" or settings.find_one({"id": "name_sync"})["lastRun"] + 3600 > \
+        if config.host != "master" or settings.find_one({"id": "TASKS"})["name_sync"]["lastRun"] + 3600 > \
                 int(datetime.now().timestamp()):
             return
 
