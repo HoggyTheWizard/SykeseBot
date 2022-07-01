@@ -61,7 +61,7 @@ class HypixelSync(commands.Cog):
             p = Player(request)
             # level returns the user's actual Hypixel level and the role associated with it, in that order
             level, corresponding_level_role = p.level()
-            corresponding_rank_role = p.rank()
+            corresponding_rank_role = p.rank()["role"]
 
             # handling level role
             if corresponding_level_role not in member_roles:
