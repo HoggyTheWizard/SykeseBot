@@ -1,9 +1,9 @@
 from discord.ext import commands, tasks
 from bot.utils.misc.requests import mojang
+from bot.utils.misc.sync import set_nick
 from db import main_db
 import bot.variables as v
 from datetime import datetime
-import discord
 import config
 
 users = main_db["users"]
@@ -47,24 +47,11 @@ class NameSync(commands.Cog):
                 no_change += 1
                 continue
 
-            if not member.nick and request["name"] != member.name:
-                try:
-
-                    await member.edit(nick=request["name"])
-                    success += 1
-                except discord.Forbidden:
-                    failed += 1
-                    await channel.send(f"I don't have permission to change {str(member)}'s nickname. ({member.id})")
-                    continue
-
-            elif member.nick != request["name"]:
-                try:
-                    await member.edit(nick=request["name"])
-                    success += 1
-                except discord.Forbidden:
-                    failed += 1
-                    await channel.send(f"I don't have permission to change {str(member)}'s nickname. ({member.id})")
-                    continue
+            status = set_nick(member, request)
+            if status:
+                success += 1
+            else:
+                failed += 1
 
         await channel.send(f"Finished syncing names:\n{success} successful\n{failed} failed\n{exempt} "
                            f"exempt\n{no_change} no change")
