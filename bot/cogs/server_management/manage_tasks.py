@@ -22,10 +22,12 @@ class ManageTasks(commands.Cog):
                                                 options=["hypixel_sync", "name_sync", "all"])):
         payload = {"hypixel_sync": 0, "name_sync": 0}
         if task != "all":
+            message = "all tasks"
             payload = {task: 0}
-
+        else:
+            message = f"the {task} task."
         settings.update_one({"id": "TASKS"}, {"$set": payload})
-        await ctx.respond(f"Task {task} has been reset.", ephemeral=ephemeral(ctx))
+        await ctx.respond(f"Successfully reset {message}. They will run within 30 minutes.", ephemeral=ephemeral(ctx))
 
     @slash(description="Force sync a user", guilds=v.guilds)
     @manager()
