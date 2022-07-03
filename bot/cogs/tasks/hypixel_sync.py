@@ -1,11 +1,10 @@
 from discord.ext import commands, tasks
-from bot.utils.hypixel.player import Player, levels, ranks
+from bot.utils.misc.sync import *
 from bot.utils.misc.requests import player
 from db import main_db
 import bot.variables as v
 from datetime import datetime
 import config
-import discord
 
 users = main_db["users"]
 settings = main_db["settings"]
@@ -26,11 +25,7 @@ class HypixelSync(commands.Cog):
         settings.update_one({"id": "TASKS"}, {"$set": {"hypixel_sync.lastRun": int(datetime.now().timestamp())}})
         guild = self.bot.get_guild(v.guilds[0])
 
-        # rank information is stored in a dict. In the list comp, x is the key
-        rank_roles = [guild.get_role(ranks[x]["role"]) for x in ranks]
-
-        # level roles are stored in a list of tuples, where [0] is the required level and [1] is the role
-        level_roles = [guild.get_role(x[1]) for x in levels]
+        rank_roles, level_roles = await get_hypixel_roles(guild)
 
         channel = guild.get_channel(v.bot_logs)
         success = 0
@@ -58,31 +53,18 @@ class HypixelSync(commands.Cog):
                 exempt += 1
                 continue
 
-            p = Player(request)
-            # level returns the user's actual Hypixel level and the role associated with it, in that order
-            level, corresponding_level_role = p.level()
-            corresponding_rank_role = p.rank()["role"]
+            statuses = await set_hypixel(guild=guild, member=member, request=request, rank_roles=rank_roles,
+                                         level_roles=level_roles)
 
-            # handling level role
-            if corresponding_level_role not in member_roles:
-                try:
-                    await member.remove_roles(*level_roles)
-                    await member.add_roles(guild.get_role(corresponding_level_role))
-                    success += 1
-                except discord.Forbidden:
-                    failed += 1
-                    await channel.send(f"I don't have permission to add {str(corresponding_level_role)} to "
-                                       f"{str(member)}.")
+            if statuses[0]:
+                success += 1
+            else:
+                failed += 1
 
-            # handling rank role
-            if corresponding_rank_role not in member_roles:
-                try:
-                    await member.remove_roles(*rank_roles)
-                    await member.add_roles(guild.get_role(corresponding_rank_role))
-                    success += 1
-                except discord.Forbidden:
-                    failed += 1
-                    await channel.send(f"I don't have permission to add {str(p.rank()['role'])} to {str(member)}.")
+            if statuses[1]:
+                success += 1
+            else:
+                failed += 1
 
         await channel.send(f"Finished syncing Hypixel levels and ranks:\n{success} successful\n{failed} failed\n"
                            f"{exempt} exempt\n{no_change} no change")

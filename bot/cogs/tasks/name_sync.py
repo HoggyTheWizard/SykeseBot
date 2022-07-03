@@ -47,7 +47,7 @@ class NameSync(commands.Cog):
                 no_change += 1
                 continue
 
-            status = set_nick(member, request)
+            status = await set_nick(member, request)
             if status:
                 success += 1
             else:
