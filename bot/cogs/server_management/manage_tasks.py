@@ -20,10 +20,10 @@ class ManageTasks(commands.Cog):
     @manager()
     async def taskreset(self, ctx, task: Option(str, "The name of the task you want to reset.",
                                                 options=["hypixel_sync", "name_sync", "all"])):
-        payload = {"hypixel_sync": 0, "name_sync": 0}
+        payload = {"hypixel_sync.lastRun": 0, "name_sync.lastRun": 0}
         if task != "all":
             message = "all tasks"
-            payload = {task: 0}
+            payload = {f"{task}.lastRun": 0}
         else:
             message = f"the {task} task."
         settings.update_one({"id": "TASKS"}, {"$set": payload})
