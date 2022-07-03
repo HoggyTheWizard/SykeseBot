@@ -25,8 +25,7 @@ class HypixelSync(commands.Cog):
         settings.update_one({"id": "TASKS"}, {"$set": {"hypixel_sync.lastRun": int(datetime.now().timestamp())}})
         guild = self.bot.get_guild(v.guilds[0])
 
-        rank_roles, level_roles = await get_hypixel_roles(guild)
-
+        rank_roles, level_roles = get_hypixel_roles(guild)
         channel = guild.get_channel(v.bot_logs)
         success = 0
         exempt = 0
