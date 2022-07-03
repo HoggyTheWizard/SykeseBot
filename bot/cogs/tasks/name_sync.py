@@ -50,8 +50,10 @@ class NameSync(commands.Cog):
             status = await set_nick(member, request)
             if status:
                 success += 1
-            else:
+            elif status is False:
                 failed += 1
+            else:
+                no_change += 1
 
         await channel.send(f"Finished syncing names:\n{success} successful\n{failed} failed\n{exempt} "
                            f"exempt\n{no_change} no change")

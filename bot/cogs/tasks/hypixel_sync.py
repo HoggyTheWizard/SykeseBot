@@ -58,13 +58,17 @@ class HypixelSync(commands.Cog):
 
             if statuses[0]:
                 success += 1
-            else:
+            elif statuses[0] is False:
                 failed += 1
+            else:
+                no_change += 1
 
             if statuses[1]:
                 success += 1
-            else:
+            elif statuses[1] is False:
                 failed += 1
+            else:
+                no_change += 1
 
         await channel.send(f"Finished syncing Hypixel levels and ranks:\n{success} successful\n{failed} failed\n"
                            f"{exempt} exempt\n{no_change} no change")

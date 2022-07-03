@@ -16,6 +16,8 @@ async def set_nick(member: discord.Member, request: dict):
             return True
         except discord.Forbidden:
             return False
+    else:
+        return None
 
 
 async def set_hypixel(guild: discord.Guild, member: discord.Member, request: dict, rank_roles: list = None,
@@ -23,7 +25,7 @@ async def set_hypixel(guild: discord.Guild, member: discord.Member, request: dic
 
     member_roles = [role.id for role in member.roles]
     p = Player(request)
-    statuses = []
+    statuses = [None, None]
 
     if not rank_roles or not level_roles:
         rank_roles, level_roles = get_hypixel_roles(guild)
