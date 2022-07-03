@@ -34,6 +34,9 @@ class Verify(commands.Cog):
                                   f" The account you have chosen has never logged on to Hypixel.")
                 return
 
+            if users.find_one({"uuid": p["player"]["uuid"]}):
+                await ctx.respond("This Minecraft account is already linked to another Discord account.")
+                return
             try:
                 discord_account = p["player"]["socialMedia"]["links"]["DISCORD"]
             except KeyError:
