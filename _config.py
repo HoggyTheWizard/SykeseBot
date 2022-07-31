@@ -1,6 +1,7 @@
 token = ""  # Discord bot token
 prefixes = ["+"]  # A list of prefixes you'd like the bot to respond to
 hypixel_api_key = ""  # Generate using /api on Hypixel
+youtube_api_key = ""  # Generate at https://console.developers.google.com/apis/
 database_user = ""  # Database username (Discord ID) or "sykese_admin" for the main instance.
 database_password = ""  # This password is not your MongoDB account password, but rather a password provided to you.
 main_db_name = ""  # The name of the target database
