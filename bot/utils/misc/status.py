@@ -10,7 +10,7 @@ def get_status(guild, yt):
     statuses = [
         f"Thank you to the {statistics.get('subscriberCount', 'ERROR')} people subscribed to Sykese",
         f"Sykese currently has {statistics.get('videoCount', 'ERROR')} videos",
-        f"{round(int(statistics.get('subscriberCount', 0))/30_000, 2)*100}% to 30,000 subscribers",
+        f"{int((int(statistics.get('subscriberCount', 0))/30_000)*100)}% to 30,000 subscribers",
         f"Thank you for boosting {choice(guild.get_role(892475435290607646).members).name}!",
         "Blue is the best color",
         f"Hello {choice(guild.members).name}, thanks for being in our server",
