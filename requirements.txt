@@ -1,4 +1,4 @@
-git+https://github.com/Pycord-Development/pycord@a8a4a29bda255e9b2afb30fc20ea3e881f096157
+git+https://github.com/Pycord-Development/pycord@2c3f794318aa7fcd5704654465ebcb76f0af4d3d
 google-api-python-client==2.55.0
 requests
 dnspython
