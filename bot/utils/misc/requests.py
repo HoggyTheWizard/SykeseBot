@@ -1,7 +1,7 @@
 from discord.commands import core
-from config import hypixel_api_key as key
 import asyncio
 import aiohttp
+import os
 
 
 class ApiException(core.ApplicationCommandError):
@@ -43,7 +43,7 @@ async def player(uuid=None, name=None, counter=0):
         return None
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://api.hypixel.net/player?key={key}&uuid={m['id']}") as r:
+        async with session.get(f"https://api.hypixel.net/player?key={os.environ['HYPIXEL_API_KEY']}&uuid={m['id']}") as r:
             # Hypixel API ratelimit reached (120 per minute)
             if r.status == 429:
                 if counter > 2:

@@ -1,7 +1,5 @@
-from config import hypixel_api_key
 from discord.ext import commands
 from db import main_db
-from config import irl_name
 from bot.utils.misc.eval_utils import *
 from traceback import format_exception
 import io
@@ -9,11 +7,12 @@ import contextlib
 import textwrap
 import discord
 import requests
+import os
 
 users = main_db["users"]
 
 
-class eval_command(commands.Cog):
+class Eval(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -31,7 +30,7 @@ class eval_command(commands.Cog):
             "author": ctx.author,
             "guild": ctx.guild,
             "message": ctx.message,
-            "hypixel_api_key": hypixel_api_key,
+            "hypixel_api_key": os.environ["HYPIXEL_API_KEY"],
             "requests": requests,
             "users": users,
             "db": main_db
@@ -49,10 +48,10 @@ class eval_command(commands.Cog):
                 result = f"{stdout.getvalue()}"
         except Exception as e:
             color = discord.Color.red()
-            result = "".join(format_exception(e, e, e.__traceback__)).replace(irl_name, "Hoggy")
+            result = "".join(format_exception(e, e, e.__traceback__))
         embed = discord.Embed(title="Code Executed", description=f"```py\n{result}\n```", color=color)
         await ctx.send(embed=embed)
 
 
 def setup(bot):
-    bot.add_cog(eval_command(bot))
+    bot.add_cog(Eval(bot))

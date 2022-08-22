@@ -1,7 +1,7 @@
-from config import database_user, database_password, main_db_name
 import pymongo
+import os
 
-cluster = pymongo.MongoClient(f"mongodb+srv://{database_user}:{database_password}@cluster0.2uexc.mongodb.net/"
-                              f"{main_db_name}?retryWrites=true&w=majority")
+cluster = pymongo.MongoClient(f"mongodb+srv://{os.environ['DATABASE_USER']}:{os.environ['DATABASE_PASSWORD']}"
+                              f"@cluster0.2uexc.mongodb.net/{os.environ['MAIN_DB_NAME']}?retryWrites=true&w=majority")
 
 main_db = cluster["main_data"]

@@ -3,16 +3,16 @@ from discord.ext import commands, tasks
 from bot.utils.checks.user import verified
 from bot.utils.checks.channel import ephemeral
 from bot.variables import guilds
+from config import host
 import datetime
 from db import main_db
-from config import host
 import asyncio
 import pytz
 
 users = main_db["users"]
 
 
-class birthday(commands.Cog):
+class Birthday(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.birthday_loop.start()
@@ -33,11 +33,10 @@ class birthday(commands.Cog):
         try:
             date = datetime.datetime(month=month, day=day, year=year)
             if int(datetime.date.today().year) - year < 13:
-                await ctx.guild.get_channel(889697149279956993).send(f"{str(ctx.author)} ({ctx.author.id}) "
-                                                   "set themselves as a date younger than 13 years old via the "
-                                                   "birthday command. Discord does not allow users younger than 13 "
-                                                   "years old to use their service. Please investigate this "
-                                                   "situation further.")
+                await ctx.guild.get_channel(889697149279956993).send(
+                    f"{str(ctx.author)} ({ctx.author.id}) set themselves as a date younger than 13 years old via the "
+                    f"birthday command. Discord does not allow users younger than 13 years old to use their service. "
+                    f"Please investigate this situation further.")
 
             users.update_one({"id": ctx.author.id}, {"$set": {
                 "Birthday.date": str(date.strftime("%m%d")),
@@ -86,4 +85,4 @@ class birthday(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(birthday(bot))
+    bot.add_cog(Birthday(bot))
