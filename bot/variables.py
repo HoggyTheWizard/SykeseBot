@@ -27,3 +27,4 @@ developer_id = 892811975329980447
 moderator_ids = [mod_id, developer_id, test_manager_id]
 manager_ids = [developer_id]
 bot_logs = 977734834929672302
+giveaways = 1011257317397893142
