@@ -1,10 +1,10 @@
 from googleapiclient.discovery import build
 from discord.ext import commands, tasks
 from bot.utils.misc.status import get_status
-from config import youtube_api_key
 import discord
+import os
 
-youtube = build(serviceName="youtube", version="v3", developerKey=youtube_api_key, cache_discovery=False)
+youtube = build(serviceName="youtube", version="v3", developerKey=os.environ["YOUTUBE_API_KEY"], cache_discovery=False)
 
 
 class Status(commands.Cog):
