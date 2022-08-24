@@ -2,6 +2,7 @@ from discord.ext import commands
 from discord.commands import SlashCommandGroup, Option, OptionChoice
 from bot.utils.checks.user import mod
 from bot.utils.ui.confirm import Confirm
+from bot.utils.ui.giveaways import GiveawayButton
 from bot.utils.ui.utils import disable_buttons
 from datetime import datetime, timedelta
 from db import main_db
@@ -10,11 +11,12 @@ import discord
 
 giveaways = main_db["giveaways"]
 users = main_db["users"]
+
+# Eventually I want to add a recent message requirement, however the initial version of this will only include user
+# level as it's quite easy to implement.
 requirement_types = {
     "none": "- No Requirements",
-    "level": "-Bot Level 5",
-    "recent": "-Recent Activity (100 messages in the last week)",
-    "level_and_recent": "- Bot Level 5\n- Recent Activity (100 messages in the last week)",
+    "level_5": "- Bot Level 5",
 
 }
 
@@ -31,15 +33,13 @@ class Giveaway(commands.Cog):
                      prize: Option(str, "The thing you're giving away."),
                      requirement: Option(str, "The requirements for this giveaway", choices=[
                          OptionChoice("None", "none"),
-                         OptionChoice("Level Requirement (5)", "level"),
-                         OptionChoice("Recent Activity (100 messages in the last week)", "recent"),
-                         OptionChoice("Level Requirement  & Recent Activity", "level_and_recent")
+                         OptionChoice("Level Requirement (5)", "level_5"),
                      ]),
-                     days: Option(int, "How many days this giveaway will last.", required=False),
-                     hours: Option(int, "How many hours this giveaway will last.", required=False),
+                     days: Option(int, "How many days this giveaway will last.", required=False, default=0),
+                     hours: Option(int, "How many hours this giveaway will last.", required=False, default=0),
                      winners: Option(int, "How many winners there will be", required=False, default=1),
                      ):
-        if not days and not hours:
+        if sum([days, hours]) == 0:
             await ctx.respond("You must specify how long this giveaway will last.", ephemeral=True)
             return
 
@@ -47,38 +47,56 @@ class Giveaway(commands.Cog):
 
         confirm_embed = discord.Embed(title="Giveaway Confirmation",
                                       description="Please verify that the information below is correct. If it's not, "
-                                                  "run the command again.")
+                                                  "run the command again.",
+                                      color=discord.Color.orange())
         confirm_embed.add_field(name="Prize", value=prize, inline=False)
         confirm_embed.add_field(name="Winners", value=str(winners), inline=False)
         confirm_embed.add_field(name="End Date", value=f"<t:{int(end.timestamp())}> (<t:{int(end.timestamp())}:R>)")
 
         view = Confirm()
         view.interaction = ctx.interaction
-        await ctx.respond(embed=confirm_embed, view=view)
+        await ctx.respond(embed=confirm_embed, view=view, ephemeral=True)
         await view.wait()
         await disable_buttons(view)
 
         if not view.value:
             await ctx.send("Cancelled giveaway")
+            view.stop()
             return
 
+        view.stop()
         giveaway_id = f"giveaways:{giveaways.find_one({'id': 'config'})['totalGiveaways'] + 1}"
 
-        embed = discord.Embed(title=prize,
-                              description=f"Requirements to enter:\n {requirement}")
+        embed = discord.Embed(title=f"Giveaway - {prize}",
+                              description=f"Requirements to enter:\n "
+                                          f"{requirement_types.get(requirement, 'Error Loading Requirements')}",
+                              color=discord.Color.green())
         embed.add_field(name="Total Winners", value=str(winners), inline=False)
         embed.add_field(name="End Date", value=f"<t:{int(end.timestamp())}> (<t:{int(end.timestamp())}:R>)")
         embed.set_footer(text=f"Giveaway ID: {giveaway_id}")
 
-        message = await ctx.get_channel(v.giveaways).send(embed=embed)
-        giveaways.insert_one({
-            "id": giveaway_id, "timestamp": int(end.timestamp()), "requirements": requirement,
-            "message": message.id, "active": True
-        })
+        message = await ctx.guild.get_channel(v.giveaways).send("Creating giveaway...")
+        enter = discord.ui.View(timeout=None)
+        payload = {
+            "id": giveaway_id, "participants": [], "timestamp": int(end.timestamp()), "requirements": requirement,
+            "message": message.id, "winners": winners, "active": True
+        }
+        enter.add_item(GiveawayButton(giveaway=payload))
+        await message.edit(content="", embed=embed, view=enter)
+        giveaways.insert_one(payload)
         giveaways.update_one(
             {"id": "config"}, {"$inc": {"totalGiveaways": 1}}
         )
-        await ctx.send(f"Giveaway created. ID: {giveaway_id}")
+        await ctx.respond(f"Giveaway created. ID: {giveaway_id}", ephemeral=True)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        view = discord.ui.View(timeout=None)
+        active = giveaways.find({"active": True})
+
+        for doc in active:
+            view.add_item(GiveawayButton(giveaway=doc))
+            self.bot.add_view(view)
 
 
 def setup(bot):
