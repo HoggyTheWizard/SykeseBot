@@ -16,10 +16,8 @@ test_guilds = guilds = [
         707963219536248982  # test server
         ]
 
-if config.host == "master":
-    guilds = main_guilds
-else:
-    guilds = test_guilds
+guilds = main_guilds if config.host == "master" else test_guilds
+
 
 mod_id = 891123241765179472
 developer_id = 892811975329980447
@@ -27,4 +25,4 @@ developer_id = 892811975329980447
 moderator_ids = [mod_id, developer_id, test_manager_id]
 manager_ids = [developer_id]
 bot_logs = 977734834929672302
-giveaways = 1011257317397893142
+giveaways = 1012328814757543946
