@@ -2,6 +2,7 @@ from discord.ext import commands
 from discord.commands import core
 from pathlib import Path
 import logging
+import discord
 
 log = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ class BotLoader(commands.Bot):
         for ext in Path().glob("bot/cogs/*/*.py"):
             try:
                 self.load_extension(".".join(part for part in ext.parts)[:-len(ext.suffix)])
-            except Exception:
+            except discord.ExtensionNotLoaded:
                 log.exception(f"Could not load extension {ext}")
 
     async def on_ready(self):
@@ -35,9 +36,14 @@ class BotLoader(commands.Bot):
     async def on_application_command_error(self, ctx, exc):
         if isinstance(exc, core.CheckFailure):
             pass
+        elif isinstance(exc, discord.NotFound):
+            try:
+                await ctx.respond("There was an issue connecting to the Discord API. Please try again.")
+            except discord.Forbidden:
+                await ctx.respond(exc)
         else:
             try:
                 await ctx.respond(exc)
-            except:
+            except discord.Forbidden:
                 await ctx.send(exc)
             log.error("", exc_info=exc)
