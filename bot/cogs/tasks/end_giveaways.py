@@ -1,5 +1,6 @@
 from discord.ext import commands, tasks
 from datetime import datetime
+from asyncio import sleep
 from db import main_db
 import bot.variables as v
 from random import choice
@@ -51,6 +52,12 @@ class EndGiveaways(commands.Cog):
     async def before_end_giveaways(self):
         print("Prepping giveaways...")
         await self.bot.wait_until_ready()
+
+    @end_giveaways.error
+    async def end_giveaways_error(self, error):
+        await self.bot.get_channel(v.bot_logs).send(f"Error in EndGiveaways task:\n{error}")
+        await sleep(60)
+        self.end_giveaways.start()
 
 
 def pick_winner(guild: discord.Guild, participants: list, winners: int = 1):

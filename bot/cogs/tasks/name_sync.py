@@ -1,6 +1,7 @@
 from discord.ext import commands, tasks
 from bot.utils.misc.requests import mojang
 from bot.utils.misc.sync import set_nick
+from asyncio import sleep
 from db import main_db
 import bot.variables as v
 from datetime import datetime
@@ -25,42 +26,31 @@ class NameSync(commands.Cog):
         settings.update_one({"id": "TASKS"}, {"$set": {"name_sync.lastRun": int(datetime.now().timestamp())}})
 
         guild = self.bot.get_guild(v.guilds[0])
-        channel = guild.get_channel(v.bot_logs)
-        success = 0
-        exempt = 0
-        no_change = 0
-        failed = 0
 
         for member in guild.members:
             if member.bot or len([role.id for role in member.roles if role.id == v.sync_lock_id]):
-                exempt += 1
                 continue
 
             doc = users.find_one({"id": member.id})
 
             if not doc:
-                no_change += 1
                 continue
 
             request = await mojang(uuid=doc.get("uuid", None))
             if not request:
-                no_change += 1
                 continue
 
-            status = await set_nick(member, request)
-            if status:
-                success += 1
-            elif status is False:
-                failed += 1
-            else:
-                no_change += 1
-
-        await channel.send(f"Finished syncing names:\n{success} successful\n{failed} failed\n{exempt} "
-                           f"exempt\n{no_change} no change")
+            await set_nick(member, request)
 
     @name_sync.before_loop
     async def before_name_sync(self):
         await self.bot.wait_until_ready()
+
+    @name_sync.error
+    async def name_sync_error(self, error):
+        await self.bot.get_channel(v.bot_logs).send(f"Error in NameSync task:\n{error}")
+        await sleep(60)
+        self.name_sync.start()
 
 
 def setup(bot):

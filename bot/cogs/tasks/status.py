@@ -1,6 +1,8 @@
 from googleapiclient.discovery import build
 from discord.ext import commands, tasks
 from bot.utils.misc.status import get_status
+from asyncio import sleep
+import bot.variables as v
 import discord
 import os
 
@@ -23,6 +25,12 @@ class Status(commands.Cog):
     async def before_printer(self):
         print("Prepping status switcher...")
         await self.bot.wait_until_ready()
+
+    @status_switcher.error
+    async def status_switcher_error(self, error):
+        await self.bot.get_channel(v.bot_logs).send(f"Error in Hypixel sync task:\n{error}")
+        await sleep(60)
+        self.status_switcher.start()
 
 
 def setup(bot):
