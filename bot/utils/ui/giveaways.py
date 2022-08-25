@@ -19,8 +19,10 @@ class GiveawayButton(discord.ui.Button):
         giveaway = self.giveaway
 
         if member.id in giveaway["participants"]:
-            await interaction.response.send_message("You're already entered this giveaway.")
-        if giveaway["requirements"] == "none":
+            await interaction.response.send_message("You've already entered this giveaway.", ephemeral=True)
+            return
+
+        elif giveaway["requirements"] == "none":
             await enter_giveaway(interaction, giveaway)
 
         else:
