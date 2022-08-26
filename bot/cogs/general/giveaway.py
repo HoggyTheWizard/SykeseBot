@@ -74,15 +74,16 @@ class Giveaway(commands.Cog):
         embed.add_field(name="Total Winners", value=str(winners), inline=False)
         embed.add_field(name="End Date", value=f"<t:{int(end.timestamp())}> (<t:{int(end.timestamp())}:R>)")
         embed.set_footer(text=f"Giveaway ID: {giveaway_id}")
-
-        message = await ctx.guild.get_channel(v.giveaways).send("Creating giveaway...")
+        channel = ctx.guild.get_channel(v.giveaways)
+        message = await channel.send("Creating giveaway...")
         enter = discord.ui.View(timeout=None)
         payload = {
             "id": giveaway_id, "participants": [], "timestamp": int(end.timestamp()), "requirements": requirement,
             "message": message.id, "winners": winners, "active": True
         }
         enter.add_item(GiveawayButton(giveaway=payload))
-        await message.edit(content="", embed=embed, view=enter)
+        await message.edit(content="", embed=embed, view=enter),
+        await channel.send(f"<@&{v.giveaway_role}>")
         giveaways.insert_one(payload)
         giveaways.update_one(
             {"id": "config"}, {"$inc": {"totalGiveaways": 1}}
