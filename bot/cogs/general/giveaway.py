@@ -3,6 +3,7 @@ from discord.commands import SlashCommandGroup, Option, OptionChoice
 from bot.utils.checks.user import mod
 from bot.utils.ui.confirm import Confirm
 from bot.utils.ui.giveaways import GiveawayButton, auto_enroll
+from bot.cogs.tasks.end_giveaways import end_giveaway
 from bot.utils.ui.utils import disable_buttons
 from datetime import datetime, timedelta
 from db import main_db
@@ -91,6 +92,32 @@ class Giveaway(commands.Cog):
             {"id": "config"}, {"$inc": {"totalGiveaways": 1}}
         )
         await ctx.respond(f"Giveaway created. ID: {giveaway_id}", ephemeral=True)
+
+    @giveaway.command(guild_ids=v.guilds, description="Reroll the winner(s) of a giveaway.")
+    @mod()
+    async def reroll(self, ctx, giveaway_id: Option(int, "The giveaway ID (just the number)", min_value=1)):
+        giveaway = giveaways.find_one({"id": f"giveaways:{giveaway_id}"})
+        if not giveaway:
+            await ctx.respond("Giveaway not found.", ephemeral=True)
+
+        elif giveaway["active"]:
+            await ctx.respond("The giveaway is still active... are you sure this is the one you want to reroll?",
+                              ephemeral=True)
+
+        else:
+            view = Confirm()
+            view.interaction = ctx.interaction
+            await ctx.respond(f"Are you sure you want to reroll the winner(s) of giveaway {giveaway_id}?", view=view,
+                              ephemeral=True)
+            await view.wait()
+            view.stop()
+
+            if view.value:
+                message = await ctx.respond("Rerolling...", ephemeral=True)
+                await end_giveaway(self, giveaway)
+                await message.edit(content="Finished!")
+            else:
+                await ctx.respond("Cancelled reroll.", ephemeral=True)
 
     @commands.Cog.listener()
     async def on_ready(self):
