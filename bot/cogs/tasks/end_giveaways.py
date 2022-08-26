@@ -4,6 +4,7 @@ from asyncio import sleep
 from db import main_db
 import bot.variables as v
 from random import choice
+import logging
 import discord
 
 giveaways = main_db["giveaways"]
@@ -55,7 +56,7 @@ class EndGiveaways(commands.Cog):
 
     @end_giveaways.error
     async def end_giveaways_error(self, error):
-        await self.bot.get_channel(v.bot_logs).send(f"Error in EndGiveaways task:\n{error}")
+        logging.getLogger(__name__).error("", exc_info=error)
         await sleep(60)
         self.end_giveaways.start()
 

@@ -5,6 +5,7 @@ from asyncio import sleep
 from db import main_db
 import bot.variables as v
 from datetime import datetime
+import logging
 import config
 
 users = main_db["users"]
@@ -54,7 +55,7 @@ class HypixelSync(commands.Cog):
 
     @hypixel_sync.error
     async def hypixel_sync_error(self, error):
-        await self.bot.get_channel(v.bot_logs).send(f"Error in HypixelSync task:\n{error}")
+        logging.getLogger(__name__).error("", exc_info=error)
         await sleep(60)
         self.hypixel_sync.start()
 

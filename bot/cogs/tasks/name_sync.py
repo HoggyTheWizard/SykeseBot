@@ -5,6 +5,7 @@ from asyncio import sleep
 from db import main_db
 import bot.variables as v
 from datetime import datetime
+import logging
 import config
 
 users = main_db["users"]
@@ -48,7 +49,7 @@ class NameSync(commands.Cog):
 
     @name_sync.error
     async def name_sync_error(self, error):
-        await self.bot.get_channel(v.bot_logs).send(f"Error in NameSync task:\n{error}")
+        logging.getLogger(__name__).error("", exc_info=error)
         await sleep(60)
         self.name_sync.start()
 
