@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord.commands import core
 from pathlib import Path
+import bot.variables as v
 import logging
 import discord
 
@@ -47,4 +48,6 @@ class BotLoader(commands.Bot):
                 await ctx.respond(exc)
             except discord.Forbidden:
                 await ctx.send(exc)
+            await self.get_channel(v.bot_logs).send(
+                embed=discord.Embed(title="Bot Error", description=f"```{exc}```", color=discord.Color.red()))
             log.error("", exc_info=exc)
