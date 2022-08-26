@@ -19,13 +19,13 @@ class ManageTasks(commands.Cog):
     @slash(description="Manage tasks", guilds=v.guilds)
     @manager()
     async def taskreset(self, ctx, task: Option(str, "The name of the task you want to reset.",
-                                                options=["hypixel_sync", "name_sync", "all"])):
+                                                choices=["hypixel_sync", "name_sync", "all"])):
         payload = {"hypixel_sync.lastRun": 0, "name_sync.lastRun": 0}
         if task != "all":
-            message = "all tasks"
+            message = f"the {task} task"
             payload = {f"{task}.lastRun": 0}
         else:
-            message = f"the {task} task."
+            message = f"all tasks"
         settings.update_one({"id": "TASKS"}, {"$set": payload})
         await ctx.respond(f"Successfully reset {message}. They will run within 30 minutes.", ephemeral=ephemeral(ctx))
 
