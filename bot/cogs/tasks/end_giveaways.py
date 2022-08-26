@@ -21,7 +21,7 @@ class EndGiveaways(commands.Cog):
         guild = self.bot.get_guild(v.guilds[0])
         for giveaway in giveaways.find({"active": True}):
             if giveaway["timestamp"] <= int(datetime.now().timestamp()):
-                winners = pick_winner(guild, giveaway["participants"])
+                winners = pick_winner(guild, giveaway["participants"], winners=giveaway["totalWinners"])
                 if not len(winners):
                     await guild.get_channel(giveaway).send(f"No one entered the giveaway. Very sad. :(")
                 giveaways.update_one(
@@ -37,7 +37,7 @@ class EndGiveaways(commands.Cog):
                     continue
                 embed = message.embeds[0]
                 embed.color = discord.Color.red()
-                embed.set_footer(text=f"{winners[0].display_name if len(winners) == 1 else f'{len(winners)}'} "
+                embed.set_footer(text=f"{winners[0].display_name if len(winners) == 1 else f'{len(winners)} people'} "
                                       f"won the giveaway!")
                 view = discord.ui.View.from_message(message)
                 view.disable_all_items()

@@ -81,7 +81,7 @@ class Giveaway(commands.Cog):
         enter = discord.ui.View(timeout=None)
         payload = {
             "id": giveaway_id, "participants": auto_enroll(ctx), "timestamp": int(end.timestamp()),
-            "requirements": requirement, "message": message.id, "winners": winners, "active": True
+            "requirements": requirement, "message": message.id, "totalWinners": winners, "active": True
         }
         enter.add_item(GiveawayButton(giveaway=payload))
         await message.edit(content="", embed=embed, view=enter),
