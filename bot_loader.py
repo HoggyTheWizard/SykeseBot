@@ -40,7 +40,8 @@ class BotLoader(commands.Bot):
             try:
                 await ctx.respond("There was an issue connecting to the Discord API. Please try again.")
             except discord.Forbidden:
-                await ctx.respond(exc)
+                await ctx.send(exc)
+            return
         else:
             try:
                 await ctx.respond(exc)
