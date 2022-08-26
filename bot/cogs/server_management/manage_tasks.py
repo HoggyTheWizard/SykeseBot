@@ -27,7 +27,8 @@ class ManageTasks(commands.Cog):
         else:
             message = f"all tasks"
         settings.update_one({"id": "TASKS"}, {"$set": payload})
-        await ctx.respond(f"Successfully reset {message}. They will run within 30 minutes.", ephemeral=ephemeral(ctx))
+        await ctx.respond(f"Successfully reset {message}. The selected task(s) will run within 30 minutes.",
+                          ephemeral=ephemeral(ctx))
 
     @slash(description="Force sync a user", guilds=v.guilds)
     @manager()
