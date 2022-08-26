@@ -1,4 +1,5 @@
 from db import main_db
+import bot.variables as v
 import discord
 
 giveaways = main_db["giveaways"]
@@ -55,3 +56,14 @@ async def enter_giveaway(interaction, giveaway):
 async def not_eligible(interaction):
     await interaction.response.send_message("You are not eligible to enter this giveaway. Please review the giveaway "
                                             "requirements listed in the giveaway post.", ephemeral=True)
+
+
+def auto_enroll(ctx):
+    participants = []
+    role_ids = [v.blue_booster_id, v.blue_freaks_bling_id]
+    roles = [ctx.guild.get_role(role) for role in role_ids]
+
+    for role in roles:
+        participants.append([member.id for member in role.members])
+
+    return participants

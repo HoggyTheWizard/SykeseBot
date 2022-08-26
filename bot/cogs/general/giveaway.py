@@ -2,7 +2,7 @@ from discord.ext import commands
 from discord.commands import SlashCommandGroup, Option, OptionChoice
 from bot.utils.checks.user import mod
 from bot.utils.ui.confirm import Confirm
-from bot.utils.ui.giveaways import GiveawayButton
+from bot.utils.ui.giveaways import GiveawayButton, auto_enroll
 from bot.utils.ui.utils import disable_buttons
 from datetime import datetime, timedelta
 from db import main_db
@@ -80,8 +80,8 @@ class Giveaway(commands.Cog):
         message = await channel.send("Creating giveaway...")
         enter = discord.ui.View(timeout=None)
         payload = {
-            "id": giveaway_id, "participants": [], "timestamp": int(end.timestamp()), "requirements": requirement,
-            "message": message.id, "winners": winners, "active": True
+            "id": giveaway_id, "participants": auto_enroll(ctx), "timestamp": int(end.timestamp()),
+            "requirements": requirement, "message": message.id, "winners": winners, "active": True
         }
         enter.add_item(GiveawayButton(giveaway=payload))
         await message.edit(content="", embed=embed, view=enter),
