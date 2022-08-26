@@ -78,8 +78,8 @@ class Verify(commands.Cog):
                 embed.add_field(name="Notification Roles",
                                 value="To assign roles to yourself, head over to <#892208575273922581>. This will "
                                       "allow you be notified of certain events, such as when Sykese uploads a video "
-                                      "to his channel or starts streaming. These are optional, however we recommend "
-                                      "that you enable them.",
+                                      "to his channel, starts streaming, or starts a giveaway. "
+                                      "These are optional, however we recommend that you enable them.",
                                 inline=False)
 
                 embed.add_field(name="Suggestions and Feedback",
