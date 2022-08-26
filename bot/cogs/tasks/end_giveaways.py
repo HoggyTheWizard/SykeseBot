@@ -64,7 +64,7 @@ def pick_winner(guild: discord.Guild, participants: list, winners: int = 1):
 async def end_giveaway(self, giveaway: dict):
     guild = self.bot.get_guild(v.guilds[0])
     participants = giveaway["participants"]
-    participants = [x for x in participants if x not in giveaway["winners"]]
+    participants = [x for x in participants if x not in giveaway.get("winners", [])]
     winners = pick_winner(guild, participants, winners=giveaway["totalWinners"])
     giveaways.update_one(
         {"id": giveaway["id"]}, {"$set": {"active": False, "winners": [winner.id for winner in winners]}}
