@@ -35,8 +35,10 @@ class Giveaway(commands.Cog):
                          OptionChoice("None", "none"),
                          OptionChoice("Level Requirement (5)", "level_5"),
                      ]),
-                     days: Option(int, "How many days this giveaway will last.", required=False, default=0),
-                     hours: Option(int, "How many hours this giveaway will last.", required=False, default=0),
+                     days: Option(int, "How many days this giveaway will last.", required=False, default=0,
+                                  min_value=1),
+                     hours: Option(int, "How many hours this giveaway will last.", required=False, default=0,
+                                   min_value=1),
                      winners: Option(int, "How many winners there will be", required=False, default=1),
                      ):
         if sum([days, hours]) == 0:
