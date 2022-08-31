@@ -28,6 +28,28 @@ class AutoModeration(commands.Cog):
                 else:
                     await message.delete()
 
+    @commands.Cog.listener()
+    async def on_auto_moderation_action_execution(self, payload):
+        """TEMPORARILY DISABLED DUE TO PYCORD HAVING MAJOR ISSUES WITH THIS LISTENER (e.g. event triggering 3 times)"""
+        return
+
+        print("triggered")
+
+        if (not payload.member or
+                payload.guild.id != v.guilds[0] or
+                host != "master"):
+            return
+
+        if payload.rule_id == v.mention_spam_rule:
+            try:
+                await payload.member.send("You have been temporarily blocked from chatting due to being flagged for "
+                                          "spam. The duration of this timeout is not static and may change. If you "
+                                          "believe this is a mistake, please contact a staff member.")
+            except discord.Forbidden:
+                await payload.guild.get_channel(v.moderator_commands).send(f"{payload.member.mention} could not be "
+                                                                           f"sent a DM due to their Discord "
+                                                                           f"permissions.")
+
 
 def setup(bot):
     bot.add_cog(AutoModeration(bot))
