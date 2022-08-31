@@ -1,4 +1,4 @@
-git+https://github.com/Pycord-Development/pycord@2c3f794318aa7fcd5704654465ebcb76f0af4d3d
+git+https://github.com/Pycord-Development/pycord@57e257dec4124c42a61f08a856ec6a5f8ecc7c57
 google-api-python-client==2.55.0
 requests
 python-dotenv
